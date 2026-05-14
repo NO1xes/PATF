@@ -1,0 +1,25 @@
+# Normalize line endings: store LF in git, checkout as-is on each platform
+* text=auto
+
+# Shell scripts must stay LF even on Windows
+*.sh text eol=lf
+
+# Python files: LF
+*.py text eol=lf
+
+# YAML / TOML / JSON: LF
+*.yaml text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
+
+# Markdown: LF
+*.md text eol=lf
+
+# Binary files: no conversion
+*.pt binary
+*.pth binary
+*.bin binary
+*.safetensors binary
+*.gguf binary

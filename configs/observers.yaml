@@ -1,0 +1,49 @@
+observers:
+  semantic_langchain:
+    layer: agent_semantic
+    enabled_by_default: true
+    cost: low
+    records:
+      - run_start
+      - run_end
+      - llm_call_start
+      - llm_call_end
+      - tool_call_start
+      - tool_call_end
+      - error
+
+  llm_client_timing:
+    layer: llm_serving
+    enabled_by_default: true
+    cost: low
+    records:
+      - request_start
+      - request_end
+      - model
+      - token_usage_if_available
+
+  vllm_metrics:
+    layer: llm_serving
+    enabled_by_default: false
+    cost: medium
+    trigger:
+      - llm_time_dominates
+      - local_vllm_enabled
+    notes: "Requires access to vLLM /metrics endpoint. Not available on local_pc_win11."
+
+  tool_process:
+    layer: tool_execution
+    enabled_by_default: false
+    cost: medium
+    trigger:
+      - tool_time_dominates
+      - tool_error_or_retry
+
+  resource_counters:
+    layer: hardware_resource
+    enabled_by_default: false
+    cost: medium
+    trigger:
+      - multi_program_workload
+      - unexplained_time_high
+    notes: "Requires GPU (nvidia-smi/NVML). Not available on local_pc_win11."

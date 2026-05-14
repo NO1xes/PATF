@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "agentprof"
+version = "0.1.0"
+description = "Methodology-driven profiling controller for agent systems under workload"
+requires-python = ">=3.11"
+dependencies = [
+    "langchain==0.3.25",
+    "langchain-openai==0.3.16",
+    "langgraph==0.4.5",
+    "openai==1.82.0",
+    "pydantic==2.11.4",
+    "pyyaml==6.0.2",
+    "python-dotenv==1.1.0",
+    "rich==14.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.5",
+    "pytest-asyncio==0.26.0",
+    "ruff==0.11.10",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agentprof*", "targets*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

@@ -1,0 +1,22 @@
+workload_name: controlled_single_program
+stage: MVP-0
+description: >
+  Three controlled tasks designed to exercise distinct bottleneck patterns:
+  slow_tool (I/O wait), cpu_tool (CPU bound), flaky_tool (error + retry).
+  Each task is one agent program (one run).
+
+programs:
+  - task_id: slow_001
+    prompt: "Use the available tool to wait for 2 seconds, then summarize what happened."
+    expected_bottleneck: tool_time
+    notes: "slow_tool sleeps for 2s — tool_time should dominate"
+
+  - task_id: cpu_001
+    prompt: "Use the CPU tool to compute once, then report the result."
+    expected_bottleneck: tool_time
+    notes: "cpu_tool runs a CPU-bound loop — tool_time should dominate"
+
+  - task_id: flaky_001
+    prompt: "Try to use the flaky tool. If it fails, try again once and explain the result."
+    expected_bottleneck: retry_wait_time
+    notes: "flaky_tool fails on first call — tests error detection and retry attribution"
