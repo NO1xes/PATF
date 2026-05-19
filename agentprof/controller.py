@@ -1,9 +1,12 @@
-"""AgentProf main controller.
+"""AgentProf main controller — v0.4 architecture.
 
 Orchestrates the profiling loop:
-  run_workload → build_timeline → generate_questions → select_observer → repeat → export_report
+  load_spec → load_registry → run_baseline → analyze →
+  generate_questions → llm_planner → validator → executor → repeat → report
 
-MVP is rule-based. Future: LangChain tool-calling controller.
+LLM decides: which questions to address, which observers, what scope, what mode.
+Python tools decide: how to collect, compute, validate, write.
+Validator enforces: no optimization actions, no budget overrun.
 """
 
 from __future__ import annotations
@@ -14,14 +17,16 @@ from agentprof.state import ProfilingState
 
 
 def run_profiling(
-    workload_config: dict,
-    target_config: dict,
-    observer_config: dict,
-    profiling_spec: dict,
-    output_dir: Path,
+    spec_path: str,
+    target_config_path: str,
+    observers_config_path: str,
+    workload_config_path: str,
+    profiles_base: str = "./profiles",
 ) -> ProfilingState:
-    """Run the full profiling loop and return the final state.
+    """Run the full profiling campaign and return final state.
 
-    Writes events.jsonl, timeline.csv, summary.json, report.md to output_dir.
+    Writes to profiles/<run_id>/: events.jsonl, timeline.csv, breakdown.json,
+    resource_snapshot.csv, resource_health.json, execution_model.json,
+    observation_plans.jsonl, evidence.jsonl, known_unknowns.md, report.md
     """
     raise NotImplementedError("Milestone 3")

@@ -1,9 +1,8 @@
-"""Tool wrapper observer (Tool/External Execution Layer).
+"""Tool events observer — renamed from tool_wrapper to match 05 spec.
 
-Wraps tool functions to emit tool_call_start, tool_call_end, error events
-with duration_ms, tool_name, input_summary, output_summary, error_type.
-
-Milestone 1 implementation target.
+Records tool_call_start, tool_call_end, error, duration_ms for each tool call.
+The decomposition fields recorded depend on what the wrapper can observe
+(duration, error, input_summary, output_summary) — not a fixed schema.
 """
 
 from __future__ import annotations
@@ -12,11 +11,11 @@ from typing import Callable
 
 from agentprof.observers.base import BaseObserver
 from agentprof.state import ProfilingState
-from agentprof.schema import AgentEvent
+from agentprof.schema.events import AgentEvent
 
 
-class ToolWrapperObserver(BaseObserver):
-    name = "tool_wrapper"
+class ToolEventsObserver(BaseObserver):
+    name = "tool_events"
     layer = "tool_execution"
 
     def __init__(self, run_id: str) -> None:
@@ -34,5 +33,5 @@ class ToolWrapperObserver(BaseObserver):
         return events
 
     def wrap_tool(self, fn: Callable) -> Callable:
-        """Return a wrapped version of fn that emits timing events."""
+        """Return a wrapped version of fn that emits start/end/error events."""
         raise NotImplementedError("Milestone 1")
