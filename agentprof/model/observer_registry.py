@@ -55,4 +55,24 @@ class ObserverRegistry:
     @classmethod
     def from_yaml(cls, path: str) -> "ObserverRegistry":
         """Build registry from configs/observers.yaml."""
-        raise NotImplementedError("Milestone 1")
+        import yaml
+
+        with open(path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+
+        registry = cls()
+        for name, cfg in data.get("observers", {}).items():
+            caps = cfg.get("capabilities", {})
+            registry.register(ObserverCapability(
+                name=name,
+                layer=cfg["layer"],
+                observes=caps.get("observes", []),
+                required_inputs=caps.get("required_inputs", []),
+                output_streams=caps.get("output_streams", []),
+                cost_level=cfg.get("cost", "low"),
+                mode=cfg.get("mode", "online"),
+                supports_time_window=cfg.get("supports_time_window", False),
+                supports_span_scope=cfg.get("supports_span_scope", False),
+                constraints=cfg.get("constraints", {}),
+            ))
+        return registry
