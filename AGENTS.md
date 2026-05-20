@@ -66,6 +66,59 @@ FORBIDDEN_ACTIONS = {
 | `agentprof/report/` | Write report.md and summary.json |
 | `agentprof/controller.py` | Orchestrate the full profiling loop |
 
+## Shared Server Resource Constraints
+
+When working on a shared GPU/CPU server, ALL of the following limits apply.
+Violating them affects other users and may result in job termination.
+
+### Hard limits (enforce before running anything)
+
+| Resource | Limit | How to enforce |
+| --- | --- | --- |
+| CPU cores | ≤ 1/8 of total | `taskset`, `os.cpu_count()//8`, or `cpuset` in Docker |
+| RAM | ≤ 1/8 of total | `ulimit -v`, cgroup `memory.limit_in_bytes`, or Docker `--memory` |
+| GPU memory | ≤ 1/8 of total per GPU | `CUDA_VISIBLE_DEVICES` + `--gpu-memory-utilization` in vLLM |
+| GPU count | ≤ 1 GPU unless explicitly allocated | set `CUDA_VISIBLE_DEVICES=<single id>` |
+| Disk (work dir) | ≤ 20 GB under assigned `$AGENTPROF_WORK_DIR` | check with `du -sh` before large writes |
+| Network ports | only ports assigned to your user/job | check with sysadmin; do not bind 0.0.0.0 |
+| Process count | no fork bombs; max 32 child processes | use `ulimit -u` |
+| Wall time | respect job scheduler limits (SLURM/PBS) | always submit via scheduler, never run directly on login node |
+
+### Development workflow tiers
+
+**Tier 1 — local unit tests (no GPU, no LLM)**
+Use conda env `agentprof`. No resource constraints needed.
+Covers: test_schema, test_storage, test_validator, test_analysis.
+
+**Tier 2 — integration tests with LLM API (no GPU locally)**
+Use conda env `agentprof` + remote vLLM API endpoint.
+Enforce CPU/RAM limits via `ulimit` before running.
+Covers: test_tools, single-task end-to-end smoke test.
+
+**Tier 3 — full workload experiments (GPU server)**
+Must use Docker or SLURM job with explicit resource limits.
+Never run Tier 3 workloads directly in a login shell.
+
+```bash
+# Example: Docker run with 1/8 resource limits (adjust totals for your server)
+docker run --rm \
+  --cpus="4" \
+  --memory="16g" \
+  --gpus '"device=0"' \
+  -e CUDA_VISIBLE_DEVICES=0 \
+  -v $AGENTPROF_WORK_DIR:/workspace \
+  agentprof:latest \
+  python -m agentprof.controller --config configs/profiling_spec.yaml
+```
+
+### What NOT to do on a shared server
+
+- Do NOT run `pip install` or `conda install` in the base environment — use your own env
+- Do NOT write output outside `$AGENTPROF_WORK_DIR`
+- Do NOT start vLLM on a port already in use
+- Do NOT leave zombie processes — always call `observer.detach()` and clean up
+- Do NOT run `pytest` without `-x` flag on shared login nodes (use job scheduler)
+
 ## Checklist Before Any PR to main
 
 1. Is Target Agent / LLM Backend / AgentProf still separate?
@@ -77,4 +130,10 @@ FORBIDDEN_ACTIONS = {
 7. Does `ExecutionModel` contain only nodes/edges/data_refs (no raw metrics)?
 8. Does `resource_snapshot` run at baseline (not deferred)?
 9. Does `report.md` include evidence and known_unknowns?
-10. Are there zero forbidden optimization actions implemented?
+10. Are zero forbidden optimization actions implemented?
+
+## New Machine / New CC Agent Onboarding
+
+See `docs/design/onboarding.md` for full setup steps.
+Quick start prompt for a new CC session is at the bottom of that file.
+

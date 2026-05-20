@@ -84,21 +84,21 @@ report/
 | --- | --- | --- |
 | `schema/` (4 files) | 实现完成 | 0 |
 | `model/execution_model.py` | 实现完成 | 0 |
-| `model/observer_registry.py` | 框架完成，`from_yaml()` 是 stub | 1 |
+| `model/observer_registry.py` | 实现完成（含 `from_yaml()`） | 1 |
 | `storage.py` | 实现完成 | 0 |
 | `validator.py` | 实现完成 | 0 |
 | `state.py` | 实现完成 | 0 |
 | `observers/base.py` | 实现完成 | 0 |
-| `observers/semantic_langchain.py` | stub | 1 |
-| `observers/llm_client_timing.py` | stub | 1 |
-| `observers/tool_events.py` | stub | 1 |
-| `observers/resource_snapshot.py` | stub | 1 |
-| `analysis/timeline.py` | stub | 1 |
-| `analysis/breakdown.py` | stub | 1 |
-| `analysis/resource_health.py` | stub | 1 |
-| `analysis/questions.py` | stub | 1 |
-| `tools/run_workload_tool.py` | stub | 1 |
-| `targets/langchain_react_agent/agent.py` | stub (`run_task`) | 1 |
+| `observers/semantic_langchain.py` | 实现完成（需 langchain_core 运行时） | 1 |
+| `observers/llm_client_timing.py` | 实现完成 | 1 |
+| `observers/tool_events.py` | 实现完成 | 1 |
+| `observers/resource_snapshot.py` | 实现完成（需 psutil） | 1 |
+| `analysis/timeline.py` | 实现完成 | 1 |
+| `analysis/breakdown.py` | 实现完成 | 1 |
+| `analysis/resource_health.py` | stub | 2 |
+| `analysis/questions.py` | stub | 2 |
+| `tools/run_workload_tool.py` | stub | 2 |
+| `targets/langchain_react_agent/agent.py` | stub (`run_task`) | 2 |
 | `targets/langchain_react_agent/tools.py` | 实现完成（3 tools） | 0 |
 | `tools/inspect_trace_tool.py` | stub | 2 |
 | `tools/query_observer_tool.py` | stub | 2 |
@@ -291,3 +291,34 @@ profiles/<run_id>/
 
 大文件（events.jsonl、resource_snapshot.csv、logs/）不进 git。  
 每次实验后把 `report.md` 和 `summary.json` 复制到 `experiments/reports/` 并更新 `EXPERIMENTS.md`。
+
+---
+
+## 9. 新机器 CC 启动提示词
+
+在新机器上开启 Claude Code 会话后，将以下提示词粘贴给 CC，它将能独立接手工作：
+
+```text
+你是 AgentProf 项目的 coding assistant。这是一个方法论驱动的 agent 系统 profiling 控制器，
+当前阶段：profiling only，不做优化。
+
+请按以下顺序读取文件，建立完整上下文：
+1. README.md          — 项目概览和架构
+2. AGENTS.md          — 硬性约束（必读，包含共享服务器资源限制）
+3. PROJECT_STATUS.md  — 当前进度、模块实现状态、下一步任务
+4. docs/design/onboarding.md  — 模块地图和维护规则（本文件）
+
+读完后，告诉我：
+- 当前处于哪个 Milestone
+- 哪些模块是 stub（待实现）
+- 你建议从哪个任务开始，理由是什么
+
+注意事项：
+- 本机是共享服务器，严格遵守 AGENTS.md 中"Shared Server Resource Constraints"一节
+- 简单单元测试用 conda env agentprof 直接运行（Tier 1/2）
+- 涉及 GPU 或大规模工作负载的测试必须用 Docker 或 SLURM（Tier 3），不得在登录节点直接运行
+- git 使用 --local config，不要修改 global git 配置
+- 不要安装任何包到 base conda 环境
+- 所有输出写入 $AGENTPROF_WORK_DIR（从 .env 读取），不要写到其他位置
+- 完成任何任务后更新 PROJECT_STATUS.md 和 CHANGELOG.md
+```
