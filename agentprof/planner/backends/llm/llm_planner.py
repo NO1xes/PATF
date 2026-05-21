@@ -15,13 +15,18 @@ Milestone 3 implementation target.
 
 from __future__ import annotations
 
+from agentprof.planner.base import BasePlanner
 from agentprof.schema.observations import ObservationPlan
 from agentprof.state import ProfilingState
 
 
-def plan_observation(state: ProfilingState) -> ObservationPlan:
-    """Call the LLM with current profiling context; return an ObservationPlan.
+class LLMPlanner(BasePlanner):
+    """LLM-based planner — calls the configured LLM to produce an ObservationPlan."""
 
-    The plan is then passed to validator.validate() before execution.
-    """
-    raise NotImplementedError("Milestone 3")
+    def plan_observation(self, state: ProfilingState) -> ObservationPlan:
+        """Call the LLM with current profiling context; return an ObservationPlan.
+
+        The plan is then passed to validator.validate() before execution.
+        """
+        raise NotImplementedError("Milestone 3")
+
