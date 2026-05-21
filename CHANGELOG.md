@@ -6,6 +6,39 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
+## 2026-05-21 | refactor | Collaboration structure + backends/ layout
+
+- Moved observer implementations to `agentprof/observers/backends/langchain/`
+- Moved planner implementations to `agentprof/planner/backends/llm/` and `backends/rule/`
+- Added `agentprof/observers/__init__.py` factory: `get_observer()`, `get_all_baseline_observers()`
+- Added `agentprof/planner/__init__.py` factory: `get_planner()`
+- Added `agentprof/planner/base.py` — `BasePlanner` ABC (FROZEN)
+- Added `configs/backends.yaml` — backend selection config
+- Added `baselines/` directory with stubs: langfuse_adapter, opentelemetry_adapter, rule_based_profiler
+- Added `experiments/designs/` with ADR-001 (observer interface) and ADR-002 (planner interface)
+- Added `experiments/comparisons/README.md` — comparison experiment conventions
+- Added `COLLAB.md` — Chinese foolproof collaboration guide (branch naming, daily git, ADR template)
+- Added `docs/design/collaboration.md` — English formal collaboration spec for CC
+- Updated `AGENTS.md` — ownership tiers, shared server resource constraints (≤1/8 CPU/RAM/GPU), Docker workflow
+- Updated `README.md` — collaboration section, baselines/ and experiments/ in structure, Milestone 1 marked complete
+- Updated `PROJECT_STATUS.md` — module paths to `backends/langchain/`, baselines stubs, 38 tests passing
+- Created `dev` branch as daily integration point; merged `refactor/v0.4-architecture` into `dev`
+
+## 2026-05-20 | feat | Milestone 1 — observers + analysis implemented (38 tests, no LLM/GPU)
+
+- Implemented `agentprof/model/observer_registry.py` — `ObserverRegistry.from_yaml()`
+- Implemented `agentprof/observers/backends/langchain/resource_snapshot.py` — psutil background thread + `write_csv()`
+- Implemented `agentprof/observers/backends/langchain/tool_events.py` — `wrap_tool()` records start/end/error + duration_ms
+- Implemented `agentprof/observers/backends/langchain/llm_client_timing.py` — monkey-patches OpenAI client
+- Implemented `agentprof/observers/backends/langchain/semantic_langchain.py` — LangChain BaseCallbackHandler
+- Implemented `agentprof/analysis/timeline.py` — `build_timeline()` pairs start/end events → SpanRecords + timeline.csv
+- Implemented `agentprof/analysis/breakdown.py` — `compute_breakdown()` leaf-span aggregation, llm/tool/wait split
+- Added `tests/test_analysis.py` — 17 tests for timeline, breakdown, ObserverRegistry.from_yaml
+- Added `tests/fixtures/sample_events.jsonl` — 14 events simulating slow_001 trace
+- All 38 tests pass: test_schema, test_storage, test_validator, test_analysis
+
+---
+
 ## 2026-05-19 | refactor | v0.4 architecture — LLM planner + deterministic tools + validator
 
 Per `05_cc_revision_and_architecture_guide.md`:
