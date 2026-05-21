@@ -1,0 +1,72 @@
+# Machine Configuration: nusa100
+# Shared Linux server (overseas). Role: LangChain/LangGraph tests, vLLM backend.
+# This is a SHARED machine — enforce all resource limits before running anything.
+# See AGENTS.md "Shared Server Resource Constraints" for hard limits.
+
+machine_id: nusa100
+owner: runyuan
+os: Ubuntu Linux
+os_version: "6.5.0-1023-oem"
+hostname: xtraa100
+shared: true
+
+hardware:
+  cpu_cores: 64
+  ram_total: "1.0 TiB"
+  gpu: "NVIDIA A100-SXM4-80GB"
+  gpu_count: 5
+  gpu_memory_per: "80 GiB"
+  notes: >
+    Shared GPU server. Use at most 1 GPU (CUDA_VISIBLE_DEVICES=<single id>).
+    GPU memory limit: <= 1/8 of 80 GiB = 10 GiB per run.
+    CPU limit: <= 8 cores (1/8 of 64). RAM limit: <= 128 GiB (1/8 of 1 TiB).
+
+python:
+  version: "3.11"
+  manager: conda
+  conda_base: /disk2/runyuan/miniconda3
+  env_name: agentprof
+  env_path: /disk2/runyuan/envs/agentprof
+
+workspace:
+  path: /disk2/runyuan/projects/AgentProf
+  profile_output: /disk2/runyuan/projects/AgentProf/profiles
+  notes: "All output must stay under $AGENTPROF_WORK_DIR. Disk quota: <= 20 GB. Disk /disk2 is nearly full (186 GB free of 14 TB) — monitor with du -sh."
+
+git:
+  auth_method: https_pat
+  remote: "https://github.com/NO1xes/AgentProf.git"
+  config_scope: local
+  notes: >
+    Clone: git clone https://<PAT>@github.com/NO1xes/AgentProf.git
+    Store PAT in .env as GITHUB_PAT. Never hardcode in scripts.
+    Set identity: git config --local user.name / user.email
+
+network:
+  region: overseas
+  pip_mirror: null
+  hf_mirror: null
+  notes: "Direct PyPI and GitHub access. No mirror needed."
+
+vllm:
+  available: true
+  model: "Qwen/Qwen3-30B-A3B"
+  port: TBD
+  notes: >
+    Start with: bash scripts/start_vllm.sh
+    Set VLLM_BASE_URL=http://localhost:<port>/v1 in .env
+    Use CUDA_VISIBLE_DEVICES=<single id> and --gpu-memory-utilization to respect 1/8 limit.
+
+resource_limits:
+  cpu_cores_max: 8
+  ram_max: "128 GiB"
+  gpu_count_max: 1
+  gpu_memory_utilization_max: 0.125
+  max_processes: 32
+  disk_gb: 20
+
+capabilities:
+  - langchain_tests
+  - vllm_backend
+  - tier2_integration
+  - tier3_experiments

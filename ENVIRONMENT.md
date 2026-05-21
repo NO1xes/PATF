@@ -10,7 +10,7 @@ This document tells you how to set up the environment on any machine.
 | machine_id | OS | GPU | Role | Shared | Config file |
 | --- | --- | --- | --- | --- | --- |
 | local_pc_win11 | Windows 11 Home (China) | None | API experiments, dev | No | `configs/machines/local_pc_win11.yaml` |
-| overseas_server | TBD (Linux) | TBD | LangChain tests, vLLM backend | Yes | `configs/machines/overseas_server.yaml` (add when confirmed) |
+| nusa100 | Ubuntu Linux (xtraa100) | 5× A100-SXM4-80GB | LangChain tests, vLLM backend | Yes | `configs/machines/nusa100.yaml` |
 
 ---
 
@@ -71,14 +71,14 @@ python -m pytest tests/ -x -q  # once tests exist
 
 ## Machine-Specific Notes
 
-### overseas_server (shared Linux server, GPU available)
+### nusa100 (shared Linux server, hostname: xtraa100, 5× A100-SXM4-80GB)
 
 This is a shared machine. Follow all resource constraints in `AGENTS.md` before running anything.
 
 **Onboarding steps:**
 
 ```bash
-# 1. Clone with HTTPS+PAT (SSH likely not available)
+# 1. Clone with HTTPS+PAT (no SSH key on shared server)
 git clone https://<PAT>@github.com/NO1xes/AgentProf.git
 cd AgentProf
 git checkout dev
@@ -87,44 +87,41 @@ git checkout dev
 git config --local user.name "your-github-handle"
 git config --local user.email "your@email.com"
 
-# 3. Create conda env in your own prefix (not base)
-conda create -n agentprof python=3.11 -y
+# 3. Conda env is already created at /disk2/runyuan/envs/agentprof
+#    If recreating: conda create -n agentprof python=3.11 -y
 conda activate agentprof
 
-# 4. Install dependencies
+# 4. Install package in editable mode (all deps already installed)
 pip install -e ".[dev]"
-# If slow, try a mirror: pip install -e ".[dev]" -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 5. Copy and fill .env
 cp .env.example .env
 # Required fields:
-#   VLLM_BASE_URL=http://localhost:8000/v1   (or remote endpoint)
-#   AGENTPROF_MACHINE=overseas_server
-#   AGENTPROF_WORK_DIR=/path/to/your/workdir  (must be under your quota)
+#   VLLM_BASE_URL=http://localhost:<port>/v1
+#   AGENTPROF_MACHINE=nusa100
+#   AGENTPROF_WORK_DIR=/disk2/runyuan/projects/AgentProf
+#   GITHUB_PAT=<your-token>   (needed for git push; never commit this file)
 
 # 6. Verify (Tier 1 — no GPU, no LLM needed)
-bash scripts/verify_env.sh
 pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/test_analysis.py -v
 ```
 
 **Resource limits (enforce before any run):**
 
 ```bash
-# Check available resources first
-nproc          # total CPU cores — use at most 1/8
-free -h        # total RAM — use at most 1/8
-nvidia-smi     # GPU memory — use at most 1/8 per GPU
+nproc          # 64 total — use at most 8
+free -h        # ~1 TiB total — use at most 128 GiB
+nvidia-smi     # 5× A100 80GB — use 1 GPU, at most 10 GiB GPU memory
 
-# Enforce CPU/RAM limits for Tier 2 runs
-ulimit -u 32                    # max 32 child processes
-# Use taskset or Docker for CPU pinning (see AGENTS.md)
+ulimit -u 32   # max 32 child processes
+# Set CUDA_VISIBLE_DEVICES=<single id> before any vLLM run
 ```
 
 **Do NOT:**
 
-- `pip install` or `conda install` into base environment
+- `pip install` or `conda install` into base environment (`/disk2/runyuan/miniconda3`)
 - Write output outside `$AGENTPROF_WORK_DIR`
-- Run `pytest` without `-x` on login node — submit via job scheduler
+- Run `pytest` without `-x` on login node
 - Leave zombie processes — always call `observer.detach()` and clean up
 
 See `AGENTS.md` "Shared Server Resource Constraints" for the full rules.

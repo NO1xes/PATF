@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: 2026-05-20
+Last updated: 2026-05-21
 
 ## Current Architecture Version
 
@@ -8,7 +8,7 @@ Last updated: 2026-05-20
 
 ## Branch
 
-Active development: `refactor/v0.4-architecture` (latest commit: cd1c1b3)
+Active development: `dev`
 Stable: `main` (commit 8323a7a, v0.1 skeleton — merge pending review)
 
 ## Module Status
@@ -83,13 +83,12 @@ pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/
 
 ## Blocked
 
-- **langchain/langgraph not installed on local_pc** — network issues with China mainland mirrors; install on overseas server
-- **vLLM backend** — requires GPU server (not available on local_pc)
+- **vLLM backend** — vLLM not yet started on nusa100; port TBD (assign before Milestone 2 smoke test)
 - Framework decision pending: LangChain ReAct vs LangGraph Deep Agents SDK (see AGENTS.md)
 
 ## Known Unknowns
 
-- Which GPU server? Who sets up vLLM?
-- LangChain callback API compatibility with LangGraph to be verified on overseas server
-- Deep Agents SDK evaluation deferred until overseas server available
+- vLLM port assignment on nusa100 (check with sysadmin)
+- LangChain callback API compatibility with LangGraph to be verified (langchain installed on nusa100, runtime test pending)
+- Deep Agents SDK evaluation deferred
 

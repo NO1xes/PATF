@@ -13,7 +13,7 @@
 - [x] Initial commit and push to GitHub (commit 8323a7a on main)
 - [x] v0.4 architecture refactor pushed to branch refactor/v0.4-architecture
 - [x] Create conda environment `agentprof` (Python 3.11) — at E:\conda\envs\agentprof on local_pc_win11
-- [ ] Merge refactor/v0.4-architecture → dev → main after review
+- [x] Merge refactor/v0.4-architecture → dev (done: commit 636162e)
 
 ## Milestone 1: Observers + Analysis ✅
 
@@ -31,7 +31,7 @@ All items below are testable without LLM/GPU. 38 tests passing.
 - [x] `agentprof/planner/base.py` — BasePlanner ABC (FROZEN)
 - [x] `agentprof/planner/__init__.py` — factory: get_planner()
 - [x] Collaboration structure: backends/ layout, COLLAB.md, docs/design/collaboration.md, ADRs
-- [ ] `agentprof/observers/backends/langchain/semantic_langchain.py` — runtime test (needs langchain_core, overseas server)
+- [ ] `agentprof/observers/backends/langchain/semantic_langchain.py` — runtime test (needs langchain_core; langchain installed on nusa100, test pending)
 - [ ] `targets/langchain_react_agent/agent.py` — implement run_task() (needs langchain + vLLM)
 
 ## Milestone 2: resource_health + questions + run_workload

@@ -6,7 +6,17 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
-## 2026-05-21 | refactor | Collaboration structure + backends/ layout
+## 2026-05-21 | chore | nusa100 onboarding + environment setup
+
+- Fixed `pyproject.toml` build backend: `setuptools.backends.legacy:build` → `setuptools.build_meta` (resolves `pip install -e` failure)
+- Added `configs/machines/nusa100.yaml` — shared Linux server (xtraa100), 5× A100-SXM4-80GB, 64 CPU, 1 TiB RAM
+- Updated `ENVIRONMENT.md`: replaced `overseas_server` placeholder with `nusa100` (real values), updated machine-specific onboarding steps
+- Updated `docs/design/onboarding.md`: current branch → `dev`; branch table aligned with COLLAB.md; machine ref → `nusa100`; git auth section updated for HTTPS+PAT
+- Updated `.env.example`: added `AGENTPROF_WORK_DIR` and `GITHUB_PAT` fields
+- Exported `requirements.lock.txt` from `agentprof` conda env (Python 3.11.15, 54 packages)
+- Verified: 38/38 tests pass on nusa100 (`test_schema`, `test_storage`, `test_validator`, `test_analysis`)
+
+
 
 - Moved observer implementations to `agentprof/observers/backends/langchain/`
 - Moved planner implementations to `agentprof/planner/backends/llm/` and `backends/rule/`

@@ -134,13 +134,13 @@ report/
 ### 4.1 通用步骤（所有机器）
 
 ```bash
-# 1. 克隆
-git clone git@github.com:NO1xes/AgentProf.git   # SSH（推荐）
+# 1. 克隆（共享服务器用 HTTPS+PAT，个人机用 SSH）
+git clone https://<PAT>@github.com/NO1xes/AgentProf.git   # HTTPS+PAT（共享服务器）
 # 或
-git clone https://github.com/NO1xes/AgentProf.git  # HTTPS fallback
+git clone git@github.com:NO1xes/AgentProf.git              # SSH（个人机）
 
 # 2. 切换到当前工作分支
-git checkout refactor/v0.4-architecture   # 或 main（合并后）
+git checkout dev
 
 # 3. 阅读 ENVIRONMENT.md，找本机对应的机器配置
 cat ENVIRONMENT.md
@@ -149,8 +149,9 @@ cat ENVIRONMENT.md
 conda create -n agentprof python=3.11 -y
 conda activate agentprof
 
-# 5. 安装依赖（中国大陆加镜像）
-pip install -e ".[dev]" -i https://pypi.tuna.tsinghua.edu.cn/simple
+# 5. 安装依赖
+pip install -e ".[dev]"
+# 中国大陆加镜像：pip install -e ".[dev]" -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 6. 复制并填写环境变量
 cp .env.example .env
@@ -158,6 +159,7 @@ cp .env.example .env
 #   VLLM_BASE_URL=http://<your-server>:8000/v1
 #   VLLM_API_KEY=dummy   （本地 vLLM 不需要真实 key）
 #   AGENTPROF_MACHINE=<machine_id>
+#   GITHUB_PAT=<your-token>   （共享服务器需要，用于 git push/pull）
 
 # 7. 验证环境
 bash scripts/verify_env.sh
@@ -178,7 +180,7 @@ cat PROJECT_STATUS.md
 | 场景 | 方法 |
 | --- | --- |
 | 个人机，SSH key 已配好 | `git clone git@github.com:NO1xes/AgentProf.git` |
-| 共享服务器，无 SSH key | 用 HTTPS + Personal Access Token（PAT）：`git clone https://<PAT>@github.com/NO1xes/AgentProf.git`，PAT 存入 `.env`，不进 git |
+| 共享服务器，无 SSH key | 用 HTTPS + Personal Access Token（PAT）：`git clone https://<PAT>@github.com/NO1xes/AgentProf.git`，PAT 存入 `.env` 的 `GITHUB_PAT` 字段，不进 git |
 | 共享服务器，git 身份 | 用 `git config --local`（不用 `--global`，避免污染其他用户） |
 
 ---
@@ -260,8 +262,10 @@ cat PROJECT_STATUS.md
 | 分支 | 用途 |
 | --- | --- |
 | `main` | 稳定可跑版本，只接受经过审查的 PR |
-| `refactor/v0.4-architecture` | 当前工作分支（待合并） |
-| `feat/<name>` | 新功能 |
+| `dev` | 日常汇合点，所有 PR 的目标分支 |
+| `feat/NO1xes-<name>` | NO1xes 的功能开发分支 |
+| `feat/collab-<name>` | 协作者的功能开发分支 |
+| `exp/<name>` | 完整实验/不同设计分支 |
 | `fix/<name>` | bug 修复 |
 | `agent/<task>` | CC 的临时分支 |
 
@@ -327,7 +331,7 @@ profiles/<run_id>/
 - observer/planner 实现放在对应的 backends/<name>/ 子目录，不要放在 observers/ 根目录
 - 切换后端只改 .env 中的 AGENTPROF_BACKEND / AGENTPROF_PLANNER，不改代码
 - 所有 PR 目标分支是 dev，不是 main
-- 共享服务器：遵守 AGENTS.md "Shared Server Resource Constraints"，Tier 3 测试用 Docker/SLURM
+- 共享服务器（nusa100）：遵守 AGENTS.md "Shared Server Resource Constraints"，Tier 3 测试用 Docker/SLURM
 - git 使用 --local config，不要修改 global git 配置
 - 不要安装任何包到 base conda 环境
 - 所有输出写入 $AGENTPROF_WORK_DIR（从 .env 读取）
