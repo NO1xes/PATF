@@ -44,17 +44,17 @@
 ### 3.1 数据流向（一次 MVP run）
 
 ```text
-configs/ (spec + target + observers + workload)
+configs/ (spec + target + observers + backends + workload)
         ↓  controller.py 读取并初始化
 agentprof/state.py  ← ProfilingState，贯穿全程
 
 tools/run_workload_tool.py
         ↓  启动 Target Agent，激活 baseline observers
-observers/
-  semantic_langchain.py   ← LangChain callback → AgentEvent
-  llm_client_timing.py    ← monkey-patch OpenAI client → AgentEvent
-  tool_events.py          ← wrap tool functions → AgentEvent
-  resource_snapshot.py    ← psutil sampling → AgentEvent
+observers/__init__.py → get_all_baseline_observers(backend="langchain")
+  backends/langchain/semantic_langchain.py   ← LangChain callback → AgentEvent
+  backends/langchain/llm_client_timing.py    ← monkey-patch OpenAI client → AgentEvent
+  backends/langchain/tool_events.py          ← wrap tool functions → AgentEvent
+  backends/langchain/resource_snapshot.py    ← psutil sampling → AgentEvent
         ↓  所有 AgentEvent 写入
 storage.py → profiles/<run_id>/events.jsonl
                            resource_snapshot.csv
@@ -65,9 +65,10 @@ analysis/
   resource_health.py ← resource_snapshot.csv → resource_health.json
   questions.py   ← breakdown + resource_health → diagnostic_questions
 
-planner/
-  context_builder.py ← state → prompt context
-  llm_planner.py     ← LLM call → ObservationPlan
+planner/__init__.py → get_planner(backend="llm"|"rule")
+  backends/llm/context_builder.py ← state → prompt context
+  backends/llm/llm_planner.py     ← LLM call → ObservationPlan
+  [或] backends/rule/rule_planner.py ← 规则决策 → ObservationPlan (消融用)
 
 validator.py   ← ObservationPlan → approved / rejected
 
@@ -80,41 +81,45 @@ report/
 
 ### 3.2 各模块实现状态
 
-| 模块 | 状态 | Milestone |
-| --- | --- | --- |
-| `schema/` (4 files) | 实现完成 | 0 |
-| `model/execution_model.py` | 实现完成 | 0 |
-| `model/observer_registry.py` | 实现完成（含 `from_yaml()`） | 1 |
-| `storage.py` | 实现完成 | 0 |
-| `validator.py` | 实现完成 | 0 |
-| `state.py` | 实现完成 | 0 |
-| `observers/base.py` | 实现完成 | 0 |
-| `observers/semantic_langchain.py` | 实现完成（需 langchain_core 运行时） | 1 |
-| `observers/llm_client_timing.py` | 实现完成 | 1 |
-| `observers/tool_events.py` | 实现完成 | 1 |
-| `observers/resource_snapshot.py` | 实现完成（需 psutil） | 1 |
-| `analysis/timeline.py` | 实现完成 | 1 |
-| `analysis/breakdown.py` | 实现完成 | 1 |
-| `analysis/resource_health.py` | stub | 2 |
-| `analysis/questions.py` | stub | 2 |
-| `tools/run_workload_tool.py` | stub | 2 |
-| `targets/langchain_react_agent/agent.py` | stub (`run_task`) | 2 |
-| `targets/langchain_react_agent/tools.py` | 实现完成（3 tools） | 0 |
-| `tools/inspect_trace_tool.py` | stub | 2 |
-| `tools/query_observer_tool.py` | stub | 2 |
-| `tools/build_report_tool.py` | stub | 2 |
-| `executor.py` | stub | 2 |
-| `report/markdown_report.py` | stub | 2 |
-| `report/summary_json.py` | stub | 2 |
-| `planner/context_builder.py` | stub | 3 |
-| `planner/llm_planner.py` | stub | 3 |
-| `controller.py` | stub | 3 |
+| 模块 | 状态 | Tier | Milestone |
+| --- | --- | --- | --- |
+| `schema/` (4 files) | 实现完成 | FROZEN | 0 |
+| `model/execution_model.py` | 实现完成 | FROZEN | 0 |
+| `model/observer_registry.py` | 实现完成 | FROZEN | 1 |
+| `storage.py` | 实现完成 | FROZEN | 0 |
+| `validator.py` | 实现完成 | FROZEN | 0 |
+| `state.py` | 实现完成 | FROZEN | 0 |
+| `observers/base.py` | 实现完成 | FROZEN | 0 |
+| `planner/base.py` | 实现完成 | FROZEN | 1 |
+| `observers/backends/langchain/semantic_langchain.py` | 实现完成（需 langchain_core） | Contributor-owned | 1 |
+| `observers/backends/langchain/llm_client_timing.py` | 实现完成 | Contributor-owned | 1 |
+| `observers/backends/langchain/tool_events.py` | 实现完成 | Contributor-owned | 1 |
+| `observers/backends/langchain/resource_snapshot.py` | 实现完成（需 psutil） | Contributor-owned | 1 |
+| `analysis/timeline.py` | 实现完成 | Shared | 1 |
+| `analysis/breakdown.py` | 实现完成 | Shared | 1 |
+| `analysis/resource_health.py` | stub | Shared | 2 |
+| `analysis/questions.py` | stub | Shared | 2 |
+| `tools/run_workload_tool.py` | stub | Shared | 2 |
+| `targets/langchain_react_agent/agent.py` | stub (`run_task`) | Shared | 2 |
+| `targets/langchain_react_agent/tools.py` | 实现完成（3 tools） | Shared | 0 |
+| `tools/inspect_trace_tool.py` | stub | Shared | 2 |
+| `tools/query_observer_tool.py` | stub | Shared | 2 |
+| `tools/build_report_tool.py` | stub | Shared | 2 |
+| `executor.py` | stub | Shared | 3 |
+| `report/markdown_report.py` | stub | Shared | 4 |
+| `report/summary_json.py` | stub | Shared | 4 |
+| `planner/backends/llm/context_builder.py` | stub | Contributor-owned | 3 |
+| `planner/backends/llm/llm_planner.py` | stub | Contributor-owned | 3 |
+| `planner/backends/rule/rule_planner.py` | stub | Contributor-owned | 2 |
+| `controller.py` | stub | Shared | 3 |
+| `baselines/langfuse_adapter/` | stub | Contributor-owned | — |
+| `baselines/rule_based_profiler/` | stub | Contributor-owned | — |
 
 ### 3.3 哪些东西由 LLM 决定，哪些由 Python 决定
 
 | 决策 | 由谁做 | 文件 |
 | --- | --- | --- |
-| 下一步观测什么 (ObservationPlan) | LLM | `planner/llm_planner.py` |
+| 下一步观测什么 (ObservationPlan) | LLM | `planner/backends/llm/llm_planner.py` |
 | 是否越界 / 预算是否超 | Python | `validator.py` |
 | 事件怎么采集 | Python | `observers/` |
 | 时间怎么算 | Python | `analysis/` |
@@ -303,22 +308,28 @@ profiles/<run_id>/
 当前阶段：profiling only，不做优化。
 
 请按以下顺序读取文件，建立完整上下文：
-1. README.md          — 项目概览和架构
-2. AGENTS.md          — 硬性约束（必读，包含共享服务器资源限制）
-3. PROJECT_STATUS.md  — 当前进度、模块实现状态、下一步任务
-4. docs/design/onboarding.md  — 模块地图和维护规则（本文件）
+1. README.md                     — 项目概览和架构
+2. AGENTS.md                     — 硬性约束、模块 ownership tier、共享服务器资源限制
+3. PROJECT_STATUS.md             — 当前进度、模块实现状态、下一步任务
+4. COLLAB.md                     — 协作流程、分支命名、对比实验操作（中文）
+5. docs/design/onboarding.md     — 模块地图和维护规则（本文件）
+6. docs/design/collaboration.md  — 正式协作规范（英文，含 CC 操作指引）
 
 读完后，告诉我：
 - 当前处于哪个 Milestone
 - 哪些模块是 stub（待实现）
+- 你被分配的任务属于哪个 ownership tier（FROZEN / Interface-stable / Contributor-owned / Shared）
 - 你建议从哪个任务开始，理由是什么
 
-注意事项：
-- 本机是共享服务器，严格遵守 AGENTS.md 中"Shared Server Resource Constraints"一节
-- 简单单元测试用 conda env agentprof 直接运行（Tier 1/2）
-- 涉及 GPU 或大规模工作负载的测试必须用 Docker 或 SLURM（Tier 3），不得在登录节点直接运行
+操作约束：
+- FROZEN 模块（schema/, model/, validator.py, storage.py, state.py, */base.py）：
+  不得修改接口，除非明确被告知两人已达成一致
+- observer/planner 实现放在对应的 backends/<name>/ 子目录，不要放在 observers/ 根目录
+- 切换后端只改 .env 中的 AGENTPROF_BACKEND / AGENTPROF_PLANNER，不改代码
+- 所有 PR 目标分支是 dev，不是 main
+- 共享服务器：遵守 AGENTS.md "Shared Server Resource Constraints"，Tier 3 测试用 Docker/SLURM
 - git 使用 --local config，不要修改 global git 配置
 - 不要安装任何包到 base conda 环境
-- 所有输出写入 $AGENTPROF_WORK_DIR（从 .env 读取），不要写到其他位置
+- 所有输出写入 $AGENTPROF_WORK_DIR（从 .env 读取）
 - 完成任何任务后更新 PROJECT_STATUS.md 和 CHANGELOG.md
 ```

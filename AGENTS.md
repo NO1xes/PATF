@@ -53,18 +53,37 @@ FORBIDDEN_ACTIONS = {
 
 ## Module Responsibilities
 
-| Module | Responsibility |
-| --- | --- |
-| `agentprof/schema/` | Data structures (AgentEvent, SpanRecord, ObservationPlan, EvidenceRecord) |
-| `agentprof/model/` | ExecutionModel (correlation graph), ObserverRegistry |
-| `agentprof/observers/` | Collect raw data, emit AgentEvents |
-| `agentprof/analysis/` | Deterministic computation: timeline, breakdown, resource_health, questions |
-| `agentprof/planner/` | LLM-based ObservationPlan generation |
-| `agentprof/tools/` | Deterministic tools callable by controller |
-| `agentprof/validator.py` | Enforce forbidden actions and budget |
-| `agentprof/executor.py` | Execute approved ObservationPlan |
-| `agentprof/report/` | Write report.md and summary.json |
-| `agentprof/controller.py` | Orchestrate the full profiling loop |
+| Module | Responsibility | Ownership tier |
+| --- | --- | --- |
+| `agentprof/schema/` | Data structures (AgentEvent, SpanRecord, ObservationPlan, EvidenceRecord) | FROZEN |
+| `agentprof/model/` | ExecutionModel (correlation graph), ObserverRegistry | FROZEN |
+| `agentprof/validator.py` | Enforce forbidden actions and budget | FROZEN |
+| `agentprof/storage.py` | Read/write events.jsonl | FROZEN |
+| `agentprof/state.py` | ProfilingState | FROZEN |
+| `agentprof/observers/base.py` | BaseObserver ABC | FROZEN |
+| `agentprof/observers/backends/<name>/` | Concrete observer implementations | Contributor-owned |
+| `agentprof/observers/__init__.py` | Factory: `get_observer()`, `get_all_baseline_observers()` | Interface-stable |
+| `agentprof/planner/base.py` | BasePlanner ABC | FROZEN |
+| `agentprof/planner/backends/llm/` | LLM-based planner | Contributor-owned |
+| `agentprof/planner/backends/rule/` | Rule-based planner (ablation) | Contributor-owned |
+| `agentprof/planner/__init__.py` | Factory: `get_planner()` | Interface-stable |
+| `agentprof/analysis/` | Deterministic computation: timeline, breakdown, resource_health, questions | Shared |
+| `agentprof/tools/` | Deterministic tools callable by controller | Shared |
+| `agentprof/executor.py` | Execute approved ObservationPlan | Shared |
+| `agentprof/report/` | Write report.md and summary.json | Shared |
+| `agentprof/controller.py` | Orchestrate the full profiling loop | Shared |
+| `baselines/` | Comparison baselines (Langfuse, OTel, rule-based) | Contributor-owned |
+| `experiments/designs/` | Architecture Decision Records | Both contributors |
+| `experiments/comparisons/` | Comparison experiment configs and results | Both contributors |
+
+**Ownership tiers explained:**
+
+- **FROZEN**: Interface changes require both contributors to agree + write an ADR
+- **Interface-stable**: Function signatures fixed; add backends freely, don't break existing callers
+- **Contributor-owned**: Owner decides; other contributor reviews but does not block
+- **Shared**: PR to `dev`; one approve required
+
+See `docs/design/collaboration.md` for full collaboration rules.
 
 ## Shared Server Resource Constraints
 

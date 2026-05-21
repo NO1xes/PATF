@@ -15,27 +15,33 @@ Stable: `main` (commit 8323a7a, v0.1 skeleton — merge pending review)
 
 | Module | Status | Notes |
 | --- | --- | --- |
-| `agentprof/schema/` | implemented | events, spans, observations, evidence |
-| `agentprof/model/execution_model.py` | implemented | correlation graph only |
-| `agentprof/model/observer_registry.py` | implemented | `from_yaml()` done |
-| `agentprof/validator.py` | implemented | forbidden actions + budget |
-| `agentprof/storage.py` | implemented | write/read events.jsonl |
-| `agentprof/observers/resource_snapshot.py` | implemented | psutil background thread |
-| `agentprof/observers/tool_events.py` | implemented | `wrap_tool()` done |
-| `agentprof/observers/llm_client_timing.py` | implemented | monkey-patches OpenAI client |
-| `agentprof/observers/semantic_langchain.py` | implemented | needs langchain_core at runtime |
+| `agentprof/schema/` | implemented | FROZEN — events, spans, observations, evidence |
+| `agentprof/model/execution_model.py` | implemented | FROZEN — correlation graph only |
+| `agentprof/model/observer_registry.py` | implemented | FROZEN — `from_yaml()` done |
+| `agentprof/validator.py` | implemented | FROZEN — forbidden actions + budget |
+| `agentprof/storage.py` | implemented | FROZEN — write/read events.jsonl |
+| `agentprof/observers/base.py` | implemented | FROZEN — BaseObserver ABC |
+| `agentprof/observers/backends/langchain/resource_snapshot.py` | implemented | psutil background thread |
+| `agentprof/observers/backends/langchain/tool_events.py` | implemented | `wrap_tool()` done |
+| `agentprof/observers/backends/langchain/llm_client_timing.py` | implemented | monkey-patches OpenAI client |
+| `agentprof/observers/backends/langchain/semantic_langchain.py` | implemented | needs langchain_core at runtime |
+| `agentprof/planner/base.py` | implemented | FROZEN — BasePlanner ABC |
+| `agentprof/planner/backends/llm/llm_planner.py` | stub | Milestone 3, needs LLM |
+| `agentprof/planner/backends/llm/context_builder.py` | stub | Milestone 3 |
+| `agentprof/planner/backends/rule/rule_planner.py` | stub | Milestone 2, ablation baseline |
 | `agentprof/analysis/timeline.py` | implemented | start/end pairing → SpanRecord |
 | `agentprof/analysis/breakdown.py` | implemented | llm/tool/wait split |
 | `agentprof/analysis/resource_health.py` | stub | Milestone 2 |
 | `agentprof/analysis/questions.py` | stub | Milestone 2 |
-| `agentprof/planner/llm_planner.py` | stub | Milestone 3, needs LLM |
-| `agentprof/planner/context_builder.py` | stub | Milestone 3 |
 | `agentprof/executor.py` | stub | Milestone 3 |
 | `agentprof/controller.py` | stub | Milestone 3 |
 | `agentprof/report/` | stub | Milestone 4 |
 | `agentprof/tools/run_workload_tool.py` | stub | Milestone 2 |
 | `targets/langchain_react_agent/tools.py` | implemented | slow/cpu/flaky tools |
 | `targets/langchain_react_agent/agent.py` | stub | needs langchain + vLLM |
+| `baselines/langfuse_adapter/` | stub | comparison baseline a |
+| `baselines/opentelemetry_adapter/` | stub | comparison baseline a |
+| `baselines/rule_based_profiler/` | stub | ablation baseline b |
 
 ## Tests
 
