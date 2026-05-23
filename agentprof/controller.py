@@ -13,6 +13,9 @@ import uuid
 from pathlib import Path
 
 import yaml
+from dotenv import load_dotenv
+
+load_dotenv()  # load .env before any os.environ.get() calls
 
 from agentprof.state import ProfilingState
 from agentprof.model.execution_model import ExecutionModel
@@ -75,6 +78,7 @@ def run_profiling(
     events_path = Path(state.events_path)
     spans = build_timeline(events_path, output_dir)
     # write_timeline_csv is called internally by build_timeline
+    state.timeline_path = str(output_dir / "timeline.csv")
 
     breakdown = compute_breakdown(spans)
     write_breakdown_json(breakdown, output_dir)

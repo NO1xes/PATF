@@ -56,7 +56,7 @@ def run_workload(state: ProfilingState, output_dir: Path) -> Path:
 
     # Build LLM client; monkey-patch it for timing before wiring into agent
     llm = ChatOpenAI(base_url=base_url, api_key=api_key, model=model, temperature=0)
-    llm_timing_obs.attach(llm.client)  # patches llm.client.chat.completions.create
+    llm_timing_obs.attach(llm.root_client)  # patches root_client.chat.completions.create
 
     agent = create_react_agent(
         llm,

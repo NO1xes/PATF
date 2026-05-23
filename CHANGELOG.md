@@ -6,6 +6,19 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
+## 2026-05-23 | fix | smoke test fixes — dotenv, tool wrap, vllm tool-call-parser
+
+- `controller.py`: add `load_dotenv()` so `.env` is loaded before os.environ reads
+- `controller.py`: set `state.timeline_path` after build_timeline
+- `run_workload_tool.py`: use `llm.root_client` (not `llm.client`) for LLMClientTimingObserver
+- `tool_events.py` `wrap_tool()`: handle LangChain StructuredTool by wrapping inner `.func`
+  and rebuilding StructuredTool — fixes `'StructuredTool' is not callable` error
+- `start_vllm.sh`: add `--enable-auto-tool-choice --tool-call-parser hermes`
+  (required for Qwen3 MoE tool calling with vLLM)
+- End-to-end smoke test PASSED: rule planner, 3 programs (slow/cpu/flaky)
+  → tool 65% / llm 35%, 6 tool calls, 2 errors, report.md generated correctly
+- 63/63 tests passing (test_tools.py now runs with langchain available on nusa100)
+
 ## 2026-05-23 | feat | Milestone 3 — full controller loop + LLM planner + report
 
 - Implemented `agentprof/planner/backends/rule/rule_planner.py` — deterministic rule planner (tool/llm/error heuristics)
@@ -30,7 +43,7 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 
 - Fixed `pyproject.toml` build backend: `setuptools.backends.legacy:build` → `setuptools.build_meta` (resolves `pip install -e` failure)
-- Added `configs/machines/nusa100.yaml` — shared Linux server (xtraa100), 5× A100-SXM4-80GB, 64 CPU, 1 TiB RAM
+- Added `configs/machines/nusa100.yaml` — shared Linux server (nusa100), 5× A100-SXM4-80GB, 64 CPU, 1 TiB RAM
 - Updated `ENVIRONMENT.md`: replaced `overseas_server` placeholder with `nusa100` (real values), updated machine-specific onboarding steps
 - Updated `docs/design/onboarding.md`: current branch → `dev`; branch table aligned with COLLAB.md; machine ref → `nusa100`; git auth section updated for HTTPS+PAT
 - Updated `.env.example`: added `AGENTPROF_WORK_DIR` and `GITHUB_PAT` fields

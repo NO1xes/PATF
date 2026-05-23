@@ -50,12 +50,25 @@ class ToolEventsObserver(BaseObserver):
         events, self._buffer = self._buffer, []
         return events
 
-    def wrap_tool(self, fn: Callable) -> Callable:
-        """Return a wrapped version of fn that emits start/end/error events."""
+    def wrap_tool(self, fn: Any) -> Any:
+        """Return a wrapped version of fn that emits start/end/error events.
+
+        Handles both plain callables and LangChain StructuredTool objects.
+        For StructuredTool, wraps the underlying func and returns a new StructuredTool
+        so LangGraph still recognises it as a tool.
+        """
+        from langchain_core.tools import StructuredTool
+
         observer = self
         tool_name = getattr(fn, "name", None) or getattr(fn, "__name__", "unknown_tool")
 
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        # Extract the raw Python callable for wrapping
+        if isinstance(fn, StructuredTool):
+            inner_func = fn.func
+        else:
+            inner_func = fn
+
+        def timed_func(*args: Any, **kwargs: Any) -> Any:
             span_id = f"span_tool_{uuid.uuid4().hex[:8]}"
             observer._buffer.append(_new_event(
                 observer._run_id, span_id, "start",
@@ -63,7 +76,7 @@ class ToolEventsObserver(BaseObserver):
             ))
             t0 = time.time()
             try:
-                result = fn(*args, **kwargs)
+                result = inner_func(*args, **kwargs)
             except Exception as exc:
                 duration_ms = round((time.time() - t0) * 1000, 1)
                 observer._buffer.append(_new_event(
@@ -87,8 +100,17 @@ class ToolEventsObserver(BaseObserver):
             ))
             return result
 
-        # preserve LangChain tool metadata if present
-        wrapper.__name__ = getattr(fn, "__name__", tool_name)
-        wrapper.__doc__ = getattr(fn, "__doc__", None)
-        return wrapper
+        if isinstance(fn, StructuredTool):
+            # Rebuild a StructuredTool with the timed func so LangGraph recognises it
+            return StructuredTool(
+                name=fn.name,
+                description=fn.description,
+                func=timed_func,
+                args_schema=fn.args_schema,
+            )
+
+        # Plain callable — preserve metadata
+        timed_func.__name__ = getattr(fn, "__name__", tool_name)
+        timed_func.__doc__ = getattr(fn, "__doc__", None)
+        return timed_func
 

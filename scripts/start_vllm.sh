@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Start vLLM with Qwen3-30B-A3B-Instruct-2507 in OpenAI-compatible mode.
-# Run on nusa100 only. Default: single GPU (GPU 1), port 18796.
+#
+# Requires these env vars (set in .env or export before running):
+#   VLLM_PYTHON   — path to Python in the vllm conda env
+#                   e.g. /path/to/envs/vllm/bin/python
+#   HF_HOME       — HuggingFace cache dir (must contain the model snapshot)
+#                   e.g. /path/to/cache/huggingface
 #
 # Usage:
 #   bash scripts/start_vllm.sh                  # foreground, port 18796, GPU 1
@@ -10,13 +15,12 @@
 #
 # Monitor:
 #   tail -f logs/vllm_18796.log                 # startup progress
-#   curl -s http://localhost:18796/health        # {"status":"ok"} when ready
+#   curl -s http://localhost:18796/health        # HTTP 200 when ready (empty body is normal)
 #   curl -s http://localhost:18796/metrics | grep -E "^vllm"   # Prometheus metrics
 #   nvidia-smi -i 1 --query-gpu=memory.used,utilization.gpu --format=csv -l 5
 #
 # Stop (GPU does not release until ALL child processes die):
-#   kill -9 $(cat vllm.pid) && rm vllm.pid
-#   # then verify: nvidia-smi -i 1 --query-gpu=memory.used --format=csv,noheader
+#   bash scripts/stop_vllm.sh
 
 set -euo pipefail
 
@@ -24,8 +28,23 @@ PORT="${1:-18796}"
 BG="${2:-}"
 GPU="${3:-1}"
 MODEL_ID="Qwen/Qwen3-30B-A3B-Instruct-2507"
-HF_HOME_PATH="/disk2/runyuan/home_links/cache/huggingface"
-VLLM_PYTHON="/disk2/runyuan/envs/vllm/bin/python"
+
+# Load .env so VLLM_PYTHON and HF_HOME are available when run as a plain script
+if [[ -f .env ]]; then
+    # shellcheck disable=SC2046
+    export $(grep -v '^\s*#' .env | grep -v '^\s*$' | xargs)
+fi
+
+if [[ -z "${VLLM_PYTHON:-}" ]]; then
+    echo "[vllm] ERROR: VLLM_PYTHON is not set." >&2
+    echo "  Add VLLM_PYTHON=/path/to/envs/vllm/bin/python to your .env file." >&2
+    exit 1
+fi
+if [[ -z "${HF_HOME:-}" ]]; then
+    echo "[vllm] ERROR: HF_HOME is not set." >&2
+    echo "  Add HF_HOME=/path/to/huggingface/cache to your .env file." >&2
+    exit 1
+fi
 
 echo "[vllm] Checking GPU availability..."
 nvidia-smi -i "$GPU" --query-gpu=index,memory.used,memory.free --format=csv,noheader
@@ -38,7 +57,7 @@ echo "[vllm] Starting $MODEL_ID on port $PORT (GPU $GPU, single card) ..."
 CMD=(
   env
     CUDA_VISIBLE_DEVICES="$GPU"
-    HF_HOME="$HF_HOME_PATH"
+    HF_HOME="$HF_HOME"
     PYTHONUNBUFFERED=1
   "$VLLM_PYTHON" -m vllm.entrypoints.openai.api_server
     --model "$MODEL_ID"
@@ -49,6 +68,8 @@ CMD=(
     --gpu-memory-utilization 0.90
     --max-model-len 8192
     --enable-prefix-caching
+    --enable-auto-tool-choice
+    --tool-call-parser hermes
     --disable-log-requests
 )
 

@@ -63,3 +63,9 @@ site/
 # vLLM runtime
 logs/
 vllm.pid
+
+# Machine-private configs (local paths, ports, usernames)
+configs/machines/*.local.yaml
+
+# Claude Code instructions with machine-private paths (kept local only)
+CLAUDE.md

@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: 2026-05-21
+Last updated: 2026-05-23
 
 ## Current Architecture Version
 
@@ -46,24 +46,22 @@ Stable: `main` (commit 8323a7a, v0.1 skeleton — merge pending review)
 
 ## Tests
 
-38 tests passing (no LLM/GPU required):
+63 tests passing (nusa100, langchain + vLLM available):
 
 - `tests/test_schema.py` — schema construction + JSON roundtrip
 - `tests/test_storage.py` — event read/write
 - `tests/test_validator.py` — forbidden actions, budget
 - `tests/test_analysis.py` — timeline, breakdown, registry from_yaml
 - `tests/test_milestone2.py` — resource_health, questions (18 tests)
+- `tests/test_tools.py` — slow/cpu/flaky tool behavior (7 tests)
 
-Pending (needs vLLM):
-
-- `tests/test_tools.py` — slow/cpu/flaky tool behavior (langchain invoke path)
-- End-to-end smoke test: run_workload → events.jsonl → timeline → breakdown
+End-to-end smoke test PASSED (rule planner, 3 workload programs, Qwen3-30B-A3B-Instruct-2507)
 
 Run with:
 
 ```bash
 conda activate agentprof
-pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/test_analysis.py tests/test_milestone2.py -v
+pytest tests/ -q
 ```
 
 ## Completed
@@ -73,6 +71,7 @@ pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/
 - [x] Milestone 1: observers, analysis (timeline, breakdown), ObserverRegistry.from_yaml() — 38 tests
 - [x] Milestone 2 (partial): resource_health, questions, run_workload_tool, agent run_task() — 56 tests
 - [x] Milestone 3: rule_planner, llm_planner, context_builder, executor, controller, report — full loop dry-run validated
+- [x] Smoke test PASSED on nusa100 (rule planner + Qwen3-30B-A3B-Instruct-2507, 2026-05-23)
 
 ## In Progress
 
