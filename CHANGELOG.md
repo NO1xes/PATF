@@ -6,6 +6,11 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
+## 2026-05-23 | chore | v0.1.1 — MIT LICENSE + open-source prep
+
+- Added `LICENSE` (MIT)
+- `README.md`, `README_zh.md`: added license section and link
+
 ## 2026-05-23 | exp | LLM planner smoke test PASSED
 
 - `AGENTPROF_PLANNER=llm` end-to-end run on nusa100 (Qwen3-30B-A3B-Instruct-2507, port 18796)
