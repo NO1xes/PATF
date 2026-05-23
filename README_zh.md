@@ -154,6 +154,7 @@ profiles/                 实验运行输出（大文件，不进 git）
 
 | 版本 | 日期 | 内容 |
 | --- | --- | --- |
+| v0.1.1 | 2026-05-23 | 添加 MIT LICENSE，开源准备 |
 | v0.1.0 | 2026-05-23 | Milestone 0–3 完成；LLM+rule planner smoke test 通过；协作工作流完备 |
 
 完整变更记录见 [CHANGELOG.md](CHANGELOG.md)。

@@ -24,7 +24,20 @@
 
 ---
 
-## 1. 仓库结构一眼看懂
+## 1. 分支总览（先看这里）
+
+| 分支 | 性质 | 说明 |
+| --- | --- | --- |
+| `main` | **正式版本** | 稳定，只从 dev 合入，每次打 tag |
+| `dev` | **日常开发** | 两人主要工作的汇合点 |
+| `feat/` `exp/` `baseline/` | 功能/实验分支 | 从 dev 切出，PR 回 dev |
+| `public` | **仓库门面（勿用于开发）** | GitHub 默认分支，展示用途；内容与本项目无关，**不要 checkout 到这里工作** |
+
+> **一句话**：克隆仓库后立即 `git checkout dev`，所有开发工作都在 `dev` 及其子分支上进行。`public` 分支不参与任何开发流程，也不会合入 main。
+
+---
+
+## 2. 仓库结构一眼看懂
 
 ```text
 agentprof/               核心包（两人共同维护，改动需知会另一位贡献者）
@@ -52,7 +65,7 @@ experiments/
 
 ---
 
-## 2. 分支命名约定
+## 3. 分支命名约定
 
 | 分支名 | 用途 | 谁创建 |
 | --- | --- | --- |
@@ -63,10 +76,11 @@ experiments/
 | `exp/NO1xes-<名字>` | maintainer 的完整实验/不同设计 | NO1xes |
 | `exp/collab-<名字>` | contributor 的完整实验/不同设计 | contributor |
 | `baseline/<名字>` | 基线搭建 | 任意 |
+| `public` | 仓库门面，**不参与开发流程** | NO1xes（只读） |
 
 ---
 
-## 3. 日常操作命令（傻瓜版）
+## 4. 日常操作命令（傻瓜版）
 
 ### 每天开始工作前
 
@@ -112,7 +126,7 @@ git pull
 
 ---
 
-## 4. 对比实验操作
+## 5. 对比实验操作
 
 两套实现跑同一个 workload 的步骤：
 
@@ -138,7 +152,7 @@ cp profiles/<run_id_B>/breakdown.json experiments/comparisons/exp001-llm-vs-rule
 
 ---
 
-## 5. 切换后端
+## 6. 切换后端
 
 ```bash
 # .env 中修改：
@@ -151,7 +165,7 @@ AGENTPROF_PLANNER=rule python -m agentprof.runner ...
 
 ---
 
-## 6. 查看另一位贡献者的不同设计
+## 7. 查看另一位贡献者的不同设计
 
 另一位贡献者在 `exp/collab-xxx` 或 `exp/NO1xes-xxx` 分支上有一套完全不同的实现，想跑对比实验：
 
@@ -179,7 +193,7 @@ git checkout exp/collab-xxx -- agentprof/analysis/breakdown.py
 
 ---
 
-## 7. 回退到某个历史版本
+## 8. 回退到某个历史版本
 
 ```bash
 # 查看最近的提交历史
@@ -198,7 +212,7 @@ git commit -m "revert timeline.py to <commit-hash>"
 
 ---
 
-## 8. 设计分歧怎么记录
+## 9. 设计分歧怎么记录
 
 当两人对某个设计有不同想法时：
 
@@ -234,7 +248,7 @@ git commit -m "revert timeline.py to <commit-hash>"
 
 ---
 
-## 9. 常见问题
+## 10. 常见问题
 
 **Q: push 失败，说 "rejected non-fast-forward"**
 
@@ -264,7 +278,7 @@ git branch         # 列出所有本地分支，* 是当前分支
 
 ---
 
-## 10. 修改工作流/流程文件的规定
+## 11. 修改工作流/流程文件的规定
 
 `AGENTS.md`、`COLLAB.md`、`docs/design/collaboration.md`、`docs/design/onboarding.md` 这类文件是**高影响文件**——改错了会让两个人（和各自的 CC）在每次任务中都走错路，影响面远大于普通代码改动。
 
@@ -285,7 +299,7 @@ git branch         # 列出所有本地分支，* 是当前分支
 
 ---
 
-## 11. 自动化测试
+## 12. 自动化测试
 
 ### 本地 pre-commit hook（推荐每人安装一次）
 
@@ -309,7 +323,7 @@ bash scripts/install_hooks.sh
 
 ---
 
-## 12. 版本号与 Tag 规则
+## 13. 版本号与 Tag 规则
 
 版本号格式：`vMAJOR.MINOR.PATCH`
 
