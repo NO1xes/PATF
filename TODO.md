@@ -51,7 +51,7 @@ All items below are testable without LLM/GPU. 38 tests passing.
 - [x] `agentprof/executor.py` — execute approved ObservationPlan
 - [x] `agentprof/controller.py` — full run_profiling() loop
 - [x] End-to-end test: controller runs, rule planner generates ObservationPlan, validator approves, report.md produced (2026-05-23)
-- [ ] LLM planner smoke test: verify Qwen3 LLM generates valid ObservationPlan JSON (AGENTPROF_PLANNER=llm)
+- [x] LLM planner smoke test: verify Qwen3 LLM generates valid ObservationPlan JSON (AGENTPROF_PLANNER=llm)
 
 ## Milestone 4: Report Quality + Multi-Program Workload
 

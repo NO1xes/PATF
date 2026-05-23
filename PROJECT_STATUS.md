@@ -72,6 +72,7 @@ pytest tests/ -q
 - [x] Milestone 2 (partial): resource_health, questions, run_workload_tool, agent run_task() — 56 tests
 - [x] Milestone 3: rule_planner, llm_planner, context_builder, executor, controller, report — full loop dry-run validated
 - [x] Smoke test PASSED on nusa100 (rule planner + Qwen3-30B-A3B-Instruct-2507, 2026-05-23)
+- [x] LLM planner smoke test PASSED on nusa100 (Qwen3-30B-A3B-Instruct-2507 → valid ObservationPlan JSON, 2026-05-23)
 
 ## In Progress
 

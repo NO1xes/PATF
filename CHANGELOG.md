@@ -6,6 +6,14 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
+## 2026-05-23 | exp | LLM planner smoke test PASSED
+
+- `AGENTPROF_PLANNER=llm` end-to-end run on nusa100 (Qwen3-30B-A3B-Instruct-2507, port 18796)
+- LLM generated 2 valid ObservationPlan JSON objects (plan_q001_01, plan_q002_01)
+- Plans focused on tool_events + tool_process; both approved by validator
+- Breakdown: tool 64% / llm 36%, 6 tool calls, 2 errors — consistent with rule-planner run
+- run_id: run_fd052729 (local only, not committed)
+
 ## 2026-05-23 | fix | smoke test fixes — dotenv, tool wrap, vllm tool-call-parser
 
 - `controller.py`: add `load_dotenv()` so `.env` is loaded before os.environ reads
