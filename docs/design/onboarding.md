@@ -194,19 +194,25 @@ cat PROJECT_STATUS.md
 | `CHANGELOG.md` | 任何代码改动，追加一行 | CC + 开发者 |
 | `TODO.md` | 完成一个 TODO 项（勾选）、新增任务、milestone 状态变化 | CC + 开发者 |
 | `PROJECT_STATUS.md` | 模块状态变化（stub→implemented）、遇到新阻塞、测试数变化 | CC + 开发者 |
-| `EXPERIMENTS.md` | 每次跑实验，登记 run_id 和关键结论 | 开发者 |
+| `README.md` | **milestone 完成或新增**、测试数变化、新机器加入 | CC + 开发者 |
+| `agentprof/README.md` | 模块实现状态变化（stub→implemented）| CC + 开发者 |
+| `EXPERIMENTS.md` | 每次 `run_profiling()` 跑完并产出 report.md，登记 run_id 和关键结论 | CC + 开发者 |
 | `docs/weekly/YYYY-MM-DD.md` | 每周组会前写一份 | 开发者 |
-| `configs/machines/<id>.yaml` | 新增机器或机器的硬件/角色信息变化 | 开发者 |
+| `configs/machines/<id>.yaml` | 新增机器或机器硬件/角色信息变化 | 开发者 |
 | `ENVIRONMENT.md` | 新增机器、依赖版本变化 | 开发者 |
 
 **较少更新（仅以下情形）：**
 
 | 文件 | 更新时机 |
 | --- | --- |
-| `README.md` | 架构变化、新 milestone 完成、新机器加入 |
-| `AGENTS.md` | 约束规则变化、新模块分工 |
-| `docs/design/agentprof_design.md` | 设计意图变化 |
-| `agentprof/README.md`、`targets/README.md` 等子目录 README | 该模块接口或角色变化 |
+| `AGENTS.md` | 约束规则变化、模块分工或 Required 表变化 |
+| `docs/design/agentprof_design.md` | 架构设计意图变化 |
+| `targets/README.md`、`baselines/README.md` 等其他子目录 README | 该目录接口、角色或实现状态变化 |
+| `COLLAB.md` / `docs/design/collaboration.md` | 协作规则、角色、分支约定变化 |
+
+**容易遗漏的高频场景：**
+- 里程碑完成时：`README.md` milestone 列表、`agentprof/README.md` status 摘要、`TODO.md` 勾选、`PROJECT_STATUS.md` 模块表——**四个文件同时需要更新**。
+- 每次实验跑完：`EXPERIMENTS.md` 登记一行——CC 应在 `run_profiling()` 完成后自动提示或执行。
 
 **`TODO.md` vs `PROJECT_STATUS.md` 分工：**
 - `TODO.md`：按 Milestone 列任务条目，追踪"还有什么要做"，粒度为一个具体任务。

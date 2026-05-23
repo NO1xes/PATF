@@ -134,10 +134,10 @@ docker/                   Containerization (future)
 ## Current Milestone
 
 - [x] Milestone 0: Repository skeleton + v0.4 architecture refactor
-- [x] Milestone 1: Observers + analysis implemented (38 tests passing, no LLM/GPU required)
-- [ ] Milestone 2: resource_health, questions, run_workload, end-to-end smoke test
-- [ ] Milestone 3: LLM Planner + full controller loop
-- [ ] Milestone 4: Multi-program workload
+- [x] Milestone 1: Observers + analysis implemented (38 tests, no LLM/GPU required)
+- [x] Milestone 2: resource_health, questions, run_workload, end-to-end smoke test (63 tests)
+- [x] Milestone 3: LLM Planner + full controller loop — smoke test PASSED (nusa100, 2026-05-23)
+- [ ] Milestone 4: Multi-program aggregation + report quality
 - [ ] Milestone 5: Real benchmark subset (BFCL V3)
 
 ## Collaboration

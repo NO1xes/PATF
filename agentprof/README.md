@@ -47,8 +47,10 @@ AGENTPROF_PLANNER=llm         # planner: llm | rule
 
 ## Module implementation status
 
-See `PROJECT_STATUS.md` for the full table. Summary:
+See `PROJECT_STATUS.md` for the full table. Summary (as of 2026-05-23):
 
-- Milestone 0–1: schema, model, validator, storage, state, observers (langchain), analysis (timeline, breakdown) — **implemented**
-- Milestone 2: resource_health, questions, run_workload_tool, rule_planner — **stub**
-- Milestone 3+: executor, controller, llm_planner, report — **stub**
+- Milestone 0–3: all modules **implemented** — schema, model, validator, storage, state,
+  observers (langchain), analysis (timeline, breakdown, resource_health, questions),
+  rule_planner, llm_planner, executor, controller, report
+- 63 tests passing; end-to-end smoke test PASSED (rule + LLM planner, nusa100)
+- Milestone 4+: multi-program aggregation, BFCL adapter — **not yet started**

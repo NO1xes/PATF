@@ -50,18 +50,21 @@ After every code change, update these files before committing:
 | `CHANGELOG.md` | Every code change — append one entry |
 | `PROJECT_STATUS.md` | Module status changes (implemented / stub / frozen) |
 | `TODO.md` | Task completed (check box), new task added, milestone status changes |
+| `README.md` | Milestone completed or uncompleted; test count changes; new machine added |
+| `agentprof/README.md` | Module implementation status changes (stub → implemented) |
+| `EXPERIMENTS.md` | Every `run_profiling()` call that produces a report — add one row |
 
 After every new experiment run:
-- Generate `profiles/<run_id>/metadata.yaml`
-- Update `EXPERIMENTS.md` with run_id and key finding
+- Add a row to `EXPERIMENTS.md` (run_id, date, machine, planner, workload, key finding)
+- Optionally copy `report.md` + `summary.json` to `experiments/reports/`
 
-`README.md` and `AGENTS.md`: update only when architecture or constraints change.
-Sub-directory `README.md` files (e.g. `agentprof/README.md`, `targets/README.md`): update when the module's interface or role changes.
+Sub-directory `README.md` files (`targets/README.md`, `baselines/README.md`, etc.):
+update when that directory's interface, role, or implementation status changes.
 
-- Every new experiment run must generate `profiles/<run_id>/metadata.yaml`
+`AGENTS.md` itself: update only when constraints or module ownership changes.
+
 - All output to `profiles/<run_id>/`: events.jsonl, timeline.csv, breakdown.json,
-  resource_snapshot.csv, resource_health.json, execution_model.json,
-  observation_plans.jsonl, evidence.jsonl, known_unknowns.md, report.md
+  resource_snapshot.csv, resource_health.json, report.md, summary.json
 - All paths must be configurable via `configs/` or `.env`
 
 ## Module Responsibilities
