@@ -20,14 +20,14 @@ This document tells you how to set up the environment on any machine.
 
 **SSH (preferred, works on machines with SSH key configured):**
 ```bash
-git clone git@github.com:NO1xes/AgentProf.git
+git clone git@github.com:NO1xes/PATF.git
 ```
 
 **HTTPS + Personal Access Token (PAT) — for shared servers where SSH is not set up:**
 
 ```bash
 # Replace <PAT> with your GitHub Personal Access Token
-git clone https://<PAT>@github.com/NO1xes/AgentProf.git
+git clone https://<PAT>@github.com/NO1xes/PATF.git
 ```
 
 How to get a PAT: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → New token. Grant `Contents: Read and Write` on the AgentProf repo.
@@ -87,8 +87,8 @@ This is a shared machine. Follow all resource constraints in `AGENTS.md` before 
 
 ```bash
 # 1. Clone with HTTPS+PAT (no SSH key on shared server)
-git clone https://<PAT>@github.com/NO1xes/AgentProf.git
-cd AgentProf
+git clone https://<PAT>@github.com/NO1xes/PATF.git
+cd PATF
 git checkout dev
 
 # 2. Set git identity locally (never --global on shared servers)
@@ -112,7 +112,7 @@ cp .env.example .env
 #   HF_HOME=/your/cache/huggingface
 #   VLLM_BASE_URL=http://localhost:<port>/v1
 #   AGENTPROF_MACHINE=nusa100
-#   AGENTPROF_WORK_DIR=/your/workspace/AgentProf
+#   AGENTPROF_WORK_DIR=/your/workspace/PATF
 #   GITHUB_PAT=<your-token>
 
 # 7. Verify (no GPU needed)
