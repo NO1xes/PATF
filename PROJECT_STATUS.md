@@ -26,16 +26,17 @@ Stable: `main` (commit 8323a7a, v0.1 skeleton — merge pending review)
 | `agentprof/observers/backends/langchain/llm_client_timing.py` | implemented | monkey-patches OpenAI client |
 | `agentprof/observers/backends/langchain/semantic_langchain.py` | implemented | needs langchain_core at runtime |
 | `agentprof/planner/base.py` | implemented | FROZEN — BasePlanner ABC |
-| `agentprof/planner/backends/llm/llm_planner.py` | stub | Milestone 3, needs LLM |
-| `agentprof/planner/backends/llm/context_builder.py` | stub | Milestone 3 |
-| `agentprof/planner/backends/rule/rule_planner.py` | stub | Milestone 2, ablation baseline |
+| `agentprof/planner/backends/llm/llm_planner.py` | implemented | LLM call → JSON parse → ObservationPlan |
+| `agentprof/planner/backends/llm/context_builder.py` | implemented | formats state → planner prompt |
+| `agentprof/planner/backends/rule/rule_planner.py` | implemented | deterministic rule planner (ablation) |
 | `agentprof/analysis/timeline.py` | implemented | start/end pairing → SpanRecord |
 | `agentprof/analysis/breakdown.py` | implemented | llm/tool/wait split |
 | `agentprof/analysis/resource_health.py` | implemented | USE method on resource_snapshot.csv |
 | `agentprof/analysis/questions.py` | implemented | generates diagnostic questions from breakdown + health |
-| `agentprof/executor.py` | stub | Milestone 3 |
-| `agentprof/controller.py` | stub | Milestone 3 |
-| `agentprof/report/` | stub | Milestone 4 |
+| `agentprof/executor.py` | implemented | executes approved plan → EvidenceRecord |
+| `agentprof/controller.py` | implemented | full run_profiling() loop |
+| `agentprof/report/markdown_report.py` | implemented | 10-section report.md |
+| `agentprof/report/summary_json.py` | implemented | summary.json |
 | `agentprof/tools/run_workload_tool.py` | implemented | wires agent + observers + storage |
 | `targets/langchain_react_agent/tools.py` | implemented | slow/cpu/flaky tools |
 | `targets/langchain_react_agent/agent.py` | implemented | run_task() done; needs vLLM for live test |
@@ -69,8 +70,13 @@ pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/
 
 - [x] Milestone 0: Repository skeleton
 - [x] v0.4 architecture refactor
-- [x] Milestone 1: observers (resource_snapshot, tool_events, llm_client_timing, semantic_langchain), analysis (timeline, breakdown), ObserverRegistry.from_yaml()
-- [x] Milestone 2 (partial): resource_health, questions, run_workload_tool, agent run_task() — 56 tests passing
+- [x] Milestone 1: observers, analysis (timeline, breakdown), ObserverRegistry.from_yaml() — 38 tests
+- [x] Milestone 2 (partial): resource_health, questions, run_workload_tool, agent run_task() — 56 tests
+- [x] Milestone 3: rule_planner, llm_planner, context_builder, executor, controller, report — full loop dry-run validated
+
+## In Progress
+
+- [ ] End-to-end live smoke test (requires vLLM endpoint — start scripts/start_vllm.sh)
 
 ## In Progress
 

@@ -46,19 +46,16 @@ All items below are testable without LLM/GPU. 38 tests passing.
 
 ## Milestone 3: LLM Planner + Full Controller Loop
 
-- [ ] `agentprof/planner/backends/llm/context_builder.py` — build_planner_context()
-- [ ] `agentprof/planner/backends/llm/llm_planner.py` — plan_observation() with LLM call
-- [ ] `agentprof/tools/inspect_trace_tool.py`
-- [ ] `agentprof/tools/query_observer_tool.py`
-- [ ] `agentprof/tools/build_report_tool.py`
-- [ ] `agentprof/executor.py` — execute approved ObservationPlan
-- [ ] `agentprof/controller.py` — full run_profiling() loop
+- [x] `agentprof/planner/backends/llm/context_builder.py` — build_planner_context()
+- [x] `agentprof/planner/backends/llm/llm_planner.py` — plan_observation() with LLM call
+- [x] `agentprof/executor.py` — execute approved ObservationPlan
+- [x] `agentprof/controller.py` — full run_profiling() loop
 - [ ] End-to-end test: controller runs, LLM generates ObservationPlan, validator approves, report produced
 
 ## Milestone 4: Report + Multi-Program Workload
 
-- [ ] `agentprof/report/markdown_report.py` — write_markdown_report()
-- [ ] `agentprof/report/summary_json.py` — write_summary_json()
+- [x] `agentprof/report/markdown_report.py` — write_markdown_report()
+- [x] `agentprof/report/summary_json.py` — write_summary_json()
 - [ ] Run all three controlled tasks end-to-end
 - [ ] Review first report.md for correctness
 - [ ] Extend `configs/workload_controlled.yaml` for multiple programs

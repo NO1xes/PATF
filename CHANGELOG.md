@@ -6,7 +6,19 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
-## 2026-05-21 | feat | Milestone 2 — resource_health, questions, run_workload, agent run_task
+## 2026-05-23 | feat | Milestone 3 — full controller loop + LLM planner + report
+
+- Implemented `agentprof/planner/backends/rule/rule_planner.py` — deterministic rule planner (tool/llm/error heuristics)
+- Implemented `agentprof/executor.py` — executes approved ObservationPlan, appends EvidenceRecord to state
+- Implemented `agentprof/planner/backends/llm/context_builder.py` — formats ProfilingState into LLM prompt context
+- Implemented `agentprof/planner/backends/llm/llm_planner.py` — LLM call → JSON parse → ObservationPlan
+- Implemented `agentprof/report/markdown_report.py` — 10-section report.md (scope, workload, breakdown, health, evidence, unknowns)
+- Implemented `agentprof/report/summary_json.py` — summary.json
+- Implemented `agentprof/controller.py` — full `run_profiling()` loop: baseline → analysis → questions → plan → validate → execute → report
+- Dry-run validated on sample_events.jsonl + rule planner (no vLLM required)
+- 56/56 tests passing; full import chain verified
+
+
 
 - Implemented `agentprof/analysis/resource_health.py` — USE-method analysis on resource_snapshot.csv; flags CPU/memory saturation, disk/network pressure; returns structured health dict
 - Implemented `agentprof/analysis/questions.py` — generates prioritized diagnostic questions from breakdown + resource_health + ExecutionModel; feeds into LLM planner
