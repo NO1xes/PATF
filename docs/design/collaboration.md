@@ -186,6 +186,40 @@ This ensures no work is lost and all design reasoning is recorded.
 
 ---
 
+## 7. Modifying Workflow and Process Files
+
+Changes to workflow, process, and collaboration files (`AGENTS.md`, `COLLAB.md`,
+`docs/design/collaboration.md`, `docs/design/onboarding.md`) are **high-impact**:
+they affect how both contributors and their coding agents behave on every future task.
+Mistakes here propagate silently.
+
+### Which files count as workflow files
+
+| File | Why it's high-impact |
+| --- | --- |
+| `AGENTS.md` | Hard rules read by CC on every session; wrong rules cause systematic errors |
+| `COLLAB.md` | Chinese operations guide; both contributors follow it daily |
+| `docs/design/collaboration.md` | Formal spec; defines PR rules, ownership tiers, roles |
+| `docs/design/onboarding.md` | Read by new contributors and CC at session start |
+
+### Rules
+
+1. **Discuss before changing** — state the problem and proposed change explicitly before editing. For CC-initiated changes, CC must describe the intent and get explicit approval.
+2. **One logical change per commit** — do not bundle workflow changes with feature code changes.
+3. **Record in CHANGELOG.md** — use type `docs` and mention which rule changed and why.
+4. **Write an ADR if the change is contested or significant** — e.g. changing ownership tiers, branch strategy, or role definitions.
+5. **Both contributors should read the diff** before it merges to `dev`.
+
+### What does NOT require this process
+
+- Fixing a factual error (stale module status, wrong filename)
+- Updating trigger tables to add a newly-discovered file
+- Typo / formatting fixes
+
+These can be committed directly with a `docs:` commit message, no prior discussion needed.
+
+---
+
 ## 7. Pre-merge Checklist
 
 Before opening a PR from `feat/` to `dev`:

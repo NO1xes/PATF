@@ -253,3 +253,24 @@ git reset HEAD~1   # 撤销 commit，保留文件改动
 git status         # 第一行显示当前分支
 git branch         # 列出所有本地分支，* 是当前分支
 ```
+
+---
+
+## 10. 修改工作流/流程文件的规定
+
+`AGENTS.md`、`COLLAB.md`、`docs/design/collaboration.md`、`docs/design/onboarding.md` 这类文件是**高影响文件**——改错了会让两个人（和各自的 CC）在每次任务中都走错路，影响面远大于普通代码改动。
+
+**改之前：先讨论**
+- 说清楚要改什么、为什么改，得到另一方（或 maintainer）明确同意后再改。
+- CC 发起的修改：CC 必须先描述意图，等确认后再执行。
+
+**改之后：记录**
+- `CHANGELOG.md` 追加一行，类型用 `docs`，写清楚改了哪条规则、原因是什么。
+- 改动较大或有争议的：写一个 ADR（`experiments/designs/ADR-00X.md`）。
+
+**不需要走这个流程的小改动：**
+- 修正错误的文件名、过时的模块状态
+- 补充之前遗漏的触发条件（纯补全）
+- 错别字/格式修复
+
+这类改动直接提交，commit 类型写 `docs:` 即可。
