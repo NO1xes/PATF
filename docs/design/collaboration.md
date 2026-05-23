@@ -61,15 +61,24 @@ AgentProf/
 Based on **GitHub Flow** (simplified trunk-based development):
 
 ```
-main      ← stable, tagged releases; accepts PRs from dev only
-dev       ← daily integration; accepts PRs from feat/ and baseline/
+main      ← stable; accepts PRs from dev only; maintainer (NO1xes) approves
+dev       ← daily integration; accepts PRs from feat/ and baseline/; one approve required
 │
-├── feat/NO1xes-<name>      Lead contributor feature branches
-├── feat/collab-<name>      Second contributor feature branches
-├── exp/NO1xes-<name>       Lead's experimental / alternative design branches
-├── exp/collab-<name>       Second contributor's experimental branches
+├── feat/NO1xes-<name>      Maintainer feature branches
+├── feat/collab-<name>      Contributor feature branches
+├── exp/NO1xes-<name>       Maintainer's experimental / alternative design branches
+├── exp/collab-<name>       Contributor's experimental branches
 └── baseline/<name>         Baseline construction branches
 ```
+
+### Roles
+
+| Role | GitHub account | Responsibilities |
+| --- | --- | --- |
+| **maintainer** | NO1xes | Repository owner; manages Branch Protection; final approve on dev→main PRs |
+| **contributor** | _collaborator account_ | Develops features, baselines, experiments; PRs reviewed and merged by maintainer |
+
+These roles only affect PR approval and `main` merge rights. Code architecture and module ownership are defined in Section 2 above — both contributors share ownership of core modules equally.
 
 ### Branch lifecycle
 
@@ -169,7 +178,7 @@ When two contributors have conflicting implementations:
 1. **Both implementations stay on their respective `exp/` branches** — neither is deleted
 2. **Write a comparison experiment** (`experiments/comparisons/expXXX/`) running both
 3. **Write an ADR** documenting both options, the comparison results, and the decision
-4. **The lead contributor makes the final call** on which goes to `dev`
+4. **The maintainer (NO1xes) makes the final call** on which goes to `dev`
 5. The non-selected implementation stays on its `exp/` branch permanently — it may be
    revived if the decision is revisited
 

@@ -1,7 +1,18 @@
 # AgentProf 协作手册
 
-> 给两个人看的操作指南，尽量不依赖 git 高级知识。  
-> 遇到任何操作，把命令复制粘贴就能用。不确定时先问 CC。
+> 给两位贡献者看的操作指南，尽量不依赖 git 高级知识。  
+> 遇到任何操作，把命令复制粘贴就能用。不确定时先问各自的 CC。
+
+---
+
+## 0. 两位贡献者的角色
+
+| 角色标识 | GitHub 账号 | 职责 |
+| --- | --- | --- |
+| **maintainer**（维护者） | NO1xes | 仓库所有者；管理 Branch Protection；PR dev→main 最终审批 |
+| **contributor**（协作者） | _对方账号_ | 开发功能、基线、实验；PR 经 maintainer approve 合入 dev |
+
+这两个角色**只影响 PR 审批和 main 合并权限**，代码架构和模块分工见 `AGENTS.md`。
 
 ---
 
@@ -37,12 +48,12 @@ experiments/
 
 | 分支名 | 用途 | 谁创建 |
 | --- | --- | --- |
-| `main` | 稳定版，只接 PR | 自动 |
-| `dev` | 日常汇合点 | 已创建 |
-| `feat/NO1xes-<名字>` | 你的功能开发 | 你 |
-| `feat/collab-<名字>` | 对方的功能开发 | 对方 |
-| `exp/NO1xes-<名字>` | 你的完整实验/不同设计 | 你 |
-| `exp/collab-<名字>` | 对方的完整实验/不同设计 | 对方 |
+| `main` | 稳定版，只接来自 dev 的 PR，maintainer 审批 | — |
+| `dev` | 日常汇合点，接受 feat/ 和 baseline/ 的 PR | — |
+| `feat/NO1xes-<名字>` | maintainer 的功能开发 | NO1xes |
+| `feat/collab-<名字>` | contributor 的功能开发 | contributor |
+| `exp/NO1xes-<名字>` | maintainer 的完整实验/不同设计 | NO1xes |
+| `exp/collab-<名字>` | contributor 的完整实验/不同设计 | contributor |
 | `baseline/<名字>` | 基线搭建 | 任意 |
 
 ---
@@ -52,9 +63,9 @@ experiments/
 ### 每天开始工作前
 
 ```bash
-# 切换到自己的分支，拉取最新内容
-git checkout feat/NO1xes-xxx   # 换成你的分支名
-git pull origin dev             # 把 dev 最新内容拉到本地（不是 merge，只是看看）
+# 切换到自己的分支，同步 dev 最新内容
+git checkout feat/<你的分支名>
+git pull origin dev --rebase
 ```
 
 ### 创建一个新功能分支
@@ -62,24 +73,23 @@ git pull origin dev             # 把 dev 最新内容拉到本地（不是 merg
 ```bash
 git checkout dev
 git pull
-git checkout -b feat/NO1xes-resource-health
+git checkout -b feat/NO1xes-resource-health   # maintainer 示例
+git checkout -b feat/collab-langfuse-adapter  # contributor 示例
 ```
-
-这三步的意思：先切到 dev，确保是最新的，然后从 dev 创建新分支。
 
 ### 保存进度（提交）
 
 ```bash
 git add <修改的文件>          # 或者 git add . 加入所有改动
 git commit -m "简短说明做了什么"
-git push origin feat/NO1xes-xxx
+git push origin feat/<你的分支名>
 ```
 
 ### 把自己的工作合入 dev
 
 ```bash
-# 在 GitHub 上开一个 PR：feat/NO1xes-xxx → dev
-# 对方看一眼，approve，然后 merge
+# 在 GitHub 上开一个 PR：feat/<你的分支名> → dev
+# 另一方 approve，maintainer merge
 # 合并后本地同步：
 git checkout dev
 git pull
@@ -89,7 +99,7 @@ git pull
 
 ```bash
 # 在 GitHub 上开 PR：dev → main
-# 两人都 approve，merge
+# 两人都 approve，maintainer merge
 ```
 
 ---
@@ -133,7 +143,7 @@ AGENTPROF_PLANNER=rule python -m agentprof.runner ...
 
 ---
 
-## 6. 对方有完整的不同设计怎么办
+## 6. 查看对方的不同设计
 
 对方在 `exp/collab-xxx` 分支上有一套完全不同的实现，想跑对比实验：
 
@@ -146,7 +156,7 @@ git checkout exp/collab-xxx
 python -m agentprof.runner --config ...
 
 # 步骤 3：切回自己的分支
-git checkout feat/NO1xes-xxx
+git checkout feat/<你的分支名>
 
 # 不需要 merge，两套代码可以独立运行
 ```
@@ -171,7 +181,7 @@ git log --oneline -20
 git checkout <commit-hash>
 
 # 回到当前分支
-git checkout feat/NO1xes-xxx
+git checkout feat/<你的分支名>
 
 # 如果想把某个文件回退到之前的版本
 git checkout <commit-hash> -- agentprof/analysis/timeline.py
@@ -221,7 +231,7 @@ git commit -m "revert timeline.py to <commit-hash>"
 **Q: push 失败，说 "rejected non-fast-forward"**
 
 ```bash
-git pull --rebase origin feat/NO1xes-xxx
+git pull --rebase origin feat/<你的分支名>
 git push
 ```
 
