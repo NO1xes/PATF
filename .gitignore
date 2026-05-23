@@ -59,3 +59,7 @@ htmlcov/
 # Docs build
 docs/_build/
 site/
+
+# vLLM runtime
+logs/
+vllm.pid
