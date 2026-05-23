@@ -7,10 +7,10 @@ This document tells you how to set up the environment on any machine.
 
 ## Registered Machines
 
-| machine_id | OS | GPU | Role | Config file |
-|---|---|---|---|---|
-| local_pc_win11 | Windows 11 Home (China) | None | API experiments, dev | `configs/machines/local_pc_win11.yaml` |
-| _(gpu_server)_ | TBD | TBD | vLLM backend, large-scale runs | `configs/machines/<name>.yaml` (add when available) |
+| machine_id | OS | GPU | Role | Shared | Config file |
+| --- | --- | --- | --- | --- | --- |
+| local_pc_win11 | Windows 11 Home (China) | None | API experiments, dev | No | `configs/machines/local_pc_win11.yaml` |
+| nusa100 | Ubuntu Linux (xtraa100) | 5× A100-SXM4-80GB | LangChain tests, vLLM backend | Yes | `configs/machines/nusa100.yaml` |
 
 ---
 
@@ -23,12 +23,25 @@ This document tells you how to set up the environment on any machine.
 git clone git@github.com:NO1xes/AgentProf.git
 ```
 
-**HTTPS (fallback, e.g. machines where SSH is blocked or key not set up):**
+**HTTPS + Personal Access Token (PAT) — for shared servers where SSH is not set up:**
+
 ```bash
-git clone https://github.com/NO1xes/AgentProf.git
+# Replace <PAT> with your GitHub Personal Access Token
+git clone https://<PAT>@github.com/NO1xes/AgentProf.git
 ```
 
-> On shared servers in China: SSH to GitHub usually works. If not, use HTTPS with a personal access token (PAT) — store the PAT in `.env`, never hardcode it.
+How to get a PAT: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → New token. Grant `Contents: Read and Write` on the AgentProf repo.
+
+Store the PAT in `.env` as `GITHUB_PAT=<token>` — never hardcode it in scripts or commit it.
+
+On a shared server, set git identity locally (not globally, to avoid polluting other users):
+
+```bash
+git config --local user.name "your-github-handle"
+git config --local user.email "your@email.com"
+```
+
+> SSH is preferred on personal machines. Use HTTPS+PAT on shared servers where you cannot install SSH keys.
 
 ### 2. Create conda environment
 
@@ -57,6 +70,61 @@ python -m pytest tests/ -x -q  # once tests exist
 ---
 
 ## Machine-Specific Notes
+
+### nusa100 (shared Linux server, hostname: xtraa100, 5× A100-SXM4-80GB)
+
+This is a shared machine. Follow all resource constraints in `AGENTS.md` before running anything.
+
+**Onboarding steps:**
+
+```bash
+# 1. Clone with HTTPS+PAT (no SSH key on shared server)
+git clone https://<PAT>@github.com/NO1xes/AgentProf.git
+cd AgentProf
+git checkout dev
+
+# 2. Set git identity locally (never --global on shared servers)
+git config --local user.name "your-github-handle"
+git config --local user.email "your@email.com"
+
+# 3. Conda env is already created at /disk2/runyuan/envs/agentprof
+#    If recreating: conda create -n agentprof python=3.11 -y
+conda activate agentprof
+
+# 4. Install package in editable mode (all deps already installed)
+pip install -e ".[dev]"
+
+# 5. Copy and fill .env
+cp .env.example .env
+# Required fields:
+#   VLLM_BASE_URL=http://localhost:<port>/v1
+#   AGENTPROF_MACHINE=nusa100
+#   AGENTPROF_WORK_DIR=/disk2/runyuan/projects/AgentProf
+#   GITHUB_PAT=<your-token>   (needed for git push; never commit this file)
+
+# 6. Verify (Tier 1 — no GPU, no LLM needed)
+pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/test_analysis.py -v
+```
+
+**Resource limits (enforce before any run):**
+
+```bash
+nproc          # 64 total — use at most 8
+free -h        # ~1 TiB total — use at most 128 GiB
+nvidia-smi     # 5× A100 80GB — use 1 GPU, at most 10 GiB GPU memory
+
+ulimit -u 32   # max 32 child processes
+# Set CUDA_VISIBLE_DEVICES=<single id> before any vLLM run
+```
+
+**Do NOT:**
+
+- `pip install` or `conda install` into base environment (`/disk2/runyuan/miniconda3`)
+- Write output outside `$AGENTPROF_WORK_DIR`
+- Run `pytest` without `-x` on login node
+- Leave zombie processes — always call `observer.detach()` and clean up
+
+See `AGENTS.md` "Shared Server Resource Constraints" for the full rules.
 
 ### local_pc_win11 (Windows 11, China mainland, no GPU)
 

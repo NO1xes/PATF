@@ -1,49 +1,73 @@
 observers:
   semantic_langchain:
     layer: agent_semantic
-    enabled_by_default: true
+    capabilities:
+      observes: [run_start, run_end, llm_call_start, llm_call_end, tool_call_start, tool_call_end, error]
+      required_inputs: [langchain_agent]
+      output_streams: [events.jsonl]
     cost: low
-    records:
-      - run_start
-      - run_end
-      - llm_call_start
-      - llm_call_end
-      - tool_call_start
-      - tool_call_end
-      - error
+    mode: online
+    supports_time_window: false
+    supports_span_scope: false
+    constraints: {}
 
   llm_client_timing:
     layer: llm_serving
-    enabled_by_default: true
+    capabilities:
+      observes: [request_start, request_end, model, token_usage, first_token_if_streaming]
+      required_inputs: [openai_compatible_client]
+      output_streams: [events.jsonl]
     cost: low
-    records:
-      - request_start
-      - request_end
-      - model
-      - token_usage_if_available
+    mode: online
+    supports_time_window: false
+    supports_span_scope: false
+    constraints: {}
+
+  tool_events:
+    layer: tool_execution
+    capabilities:
+      observes: [tool_call_start, tool_call_end, error, duration_ms]
+      required_inputs: [wrapped_tools]
+      output_streams: [events.jsonl]
+    cost: low
+    mode: online
+    supports_time_window: false
+    supports_span_scope: true
+    constraints: {}
+
+  resource_snapshot:
+    layer: hardware_resource
+    capabilities:
+      observes: [cpu_util, memory_util, disk_io, network_io]
+      required_inputs: [psutil]
+      output_streams: [resource_snapshot.csv]
+    cost: low
+    mode: online
+    supports_time_window: true
+    supports_span_scope: false
+    constraints: {}
 
   vllm_metrics:
     layer: llm_serving
-    enabled_by_default: false
+    capabilities:
+      observes: [queue_depth, prefill_time, decode_time, ttft, tpot, kv_cache_hit_rate]
+      required_inputs: [vllm_metrics_endpoint]
+      output_streams: [vllm_metrics.jsonl]
     cost: medium
-    trigger:
-      - llm_time_dominates
-      - local_vllm_enabled
-    notes: "Requires access to vLLM /metrics endpoint. Not available on local_pc_win11."
+    mode: query
+    supports_time_window: true
+    supports_span_scope: false
+    constraints:
+      requires_local_vllm: true
 
   tool_process:
     layer: tool_execution
-    enabled_by_default: false
+    capabilities:
+      observes: [pid, process_tree, cpu_pct, memory_rss, stdout, stderr]
+      required_inputs: [psutil, tool_pid_mapping]
+      output_streams: [process_resource.csv]
     cost: medium
-    trigger:
-      - tool_time_dominates
-      - tool_error_or_retry
-
-  resource_counters:
-    layer: hardware_resource
-    enabled_by_default: false
-    cost: medium
-    trigger:
-      - multi_program_workload
-      - unexplained_time_high
-    notes: "Requires GPU (nvidia-smi/NVML). Not available on local_pc_win11."
+    mode: online
+    supports_time_window: true
+    supports_span_scope: true
+    constraints: {}

@@ -1,33 +1,36 @@
-experiment_name: controlled_langchain_react_mvp0
+experiment_name: controlled_langchain_react_mvp
 stage: MVP-0
 
-profiling_scope:
-  object: agent_system_under_workload
-  target_system: langchain_react_agent_vllm
-  unit: agent_program
-  boundary:
-    - agent_runtime
-    - llm_serving
-    - tool_execution
-    - machine_resource
+profiling_object: agent_system_under_workload
 
 outputs:
   - events_jsonl
   - timeline_csv
-  - summary_json
+  - breakdown_json
+  - resource_snapshot_csv
+  - resource_health_json
   - report_md
+  - known_unknowns
 
-current_constraints:
+constraints:
   do_optimization: false
-  allow_config_mutation: false
-  allow_concurrency_change_by_agent: false
-  allow_arrival_rate_change_by_agent: false
+  forbidden_actions:
+    - change_concurrency
+    - change_arrival_rate
+    - toggle_cache
+    - set_timeout
+    - set_quota
+    - apply_patch
+    - modify_prompt
+    - modify_planner
 
-methodology:
-  outer: performance_evaluation_steps   # Jain / Gregg outer loop
-  inner: drill_down_latency_analysis    # Gregg drill-down
+# Observers active from the very first run (baseline)
+initial_baseline:
+  semantic_trace: true
+  llm_client_timing: true
+  tool_events: true
+  coarse_resource_snapshot: true
 
 stop_condition:
   max_iterations: 2
   max_wall_time_minutes: 30
-  stop_after_report: true

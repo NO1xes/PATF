@@ -29,11 +29,9 @@ env/
 *.ggml
 models/
 
-# Large experiment outputs (keep index files, not raw data)
-profiles/*/events.jsonl
-profiles/*/logs/
-profiles/*/artifacts/
-experiments/runs/*/
+# Experiment run outputs — not committed; too large and machine-specific
+profiles/
+experiments/runs/
 
 # Jupyter
 .ipynb_checkpoints/
@@ -59,3 +57,13 @@ htmlcov/
 # Docs build
 docs/_build/
 site/
+
+# vLLM runtime
+logs/
+vllm.pid
+
+# Machine-private configs (local paths, ports, usernames)
+configs/machines/*.local.yaml
+
+# Claude Code instructions with machine-private paths (kept local only)
+CLAUDE.md

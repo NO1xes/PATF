@@ -1,0 +1,48 @@
+# Machine Configuration: nusa100 (template — public)
+# Shared GPU server for AgentProf experiments.
+# This file contains ONLY non-sensitive hardware/role information.
+# Private paths (conda, workspace, model cache, ports) go in nusa100.local.yaml (gitignored).
+#
+# See configs/machines/nusa100.local.yaml.example for the local config template.
+
+machine_id: nusa100
+os: Ubuntu Linux
+os_version: "6.5.0-1023-oem"
+shared: true
+
+hardware:
+  cpu_cores: 64
+  ram_total: "1.0 TiB"
+  gpu: "NVIDIA A100-SXM4-80GB"
+  gpu_count: 5           # total on machine; we use at most 1
+  gpu_memory_per: "80 GiB"
+
+resource_limits:
+  cpu_cores_max: 8       # 1/8 of 64
+  ram_max: "128 GiB"     # 1/8 of 1 TiB
+  gpu_count_max: 1
+  gpu_memory_utilization_max: 0.90   # Qwen3-30B needs ~60 GB fp16
+  max_processes: 32
+  disk_gb: 20
+
+git:
+  auth_method: https_pat
+  remote: "https://github.com/NO1xes/AgentProf.git"
+  config_scope: local    # MUST use --local on shared servers
+
+network:
+  region: overseas
+  pip_mirror: null
+  hf_mirror: null
+
+capabilities:
+  - langchain_tests
+  - vllm_backend
+  - tier2_integration
+  - tier3_experiments
+
+vllm:
+  model: "Qwen/Qwen3-30B-A3B-Instruct-2507"
+  tensor_parallel_size: 1
+  tool_call_parser: hermes
+  notes: "See .env for VLLM_BASE_URL and VLLM_MODEL. See scripts/start_vllm.sh for startup."

@@ -2,8 +2,6 @@
 
 This is the agent being profiled — not the profiler.
 AgentProf attaches observers externally; this file should not import agentprof.
-
-Milestone 1 implementation target.
 """
 
 from __future__ import annotations
@@ -27,4 +25,10 @@ def build_agent(base_url: str, api_key: str, model: str):
 
 def run_task(agent, prompt: str) -> str:
     """Run a single task and return the final answer string."""
-    raise NotImplementedError("Milestone 1")
+    result = agent.invoke({"messages": [{"role": "user", "content": prompt}]})
+    messages = result.get("messages", [])
+    for msg in reversed(messages):
+        content = getattr(msg, "content", None)
+        if content and isinstance(content, str):
+            return content
+    return ""
