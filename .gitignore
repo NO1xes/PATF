@@ -29,11 +29,9 @@ env/
 *.ggml
 models/
 
-# Large experiment outputs (keep index files, not raw data)
-profiles/*/events.jsonl
-profiles/*/logs/
-profiles/*/artifacts/
-experiments/runs/*/
+# Experiment run outputs — not committed; too large and machine-specific
+profiles/
+experiments/runs/
 
 # Jupyter
 .ipynb_checkpoints/
