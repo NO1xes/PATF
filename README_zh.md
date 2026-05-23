@@ -168,3 +168,7 @@ profiles/                 实验运行输出（大文件，不进 git）
 | nusa100 | LangChain 测试，vLLM 后端 | 5× A100-SXM4-80GB | `configs/machines/nusa100.yaml` |
 
 各机器详细搭建步骤见 [ENVIRONMENT.md](ENVIRONMENT.md)。
+
+## 许可证
+
+MIT License — 见 [LICENSE](LICENSE)。

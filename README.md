@@ -165,3 +165,7 @@ Key points:
 | nusa100 | LangChain tests, vLLM backend | 5× A100-SXM4-80GB | `configs/machines/nusa100.yaml` |
 
 See [ENVIRONMENT.md](ENVIRONMENT.md) for per-machine setup instructions.
+
+## License
+
+MIT License — see [LICENSE](LICENSE).
