@@ -52,7 +52,7 @@ AgentProf/
 | **Frozen** | `schema/`, `model/`, `validator.py`, `storage.py`, `state.py`, all `base.py` files | Both contributors must agree; record in ADR |
 | **Interface-stable** | `observers/__init__.py`, `planner/__init__.py`, `analysis/` function signatures | Agree on signature before implementation; document in ADR if changed |
 | **Contributor-owned** | `backends/<name>/`, `baselines/<name>/`, `experiments/` | Owner decides; other contributor reviews but does not block |
-| **Shared workload** | `targets/`, `configs/`, `controller.py`, `executor.py`, `report/` | PR to `dev`, one approve required |
+| **Shared workload** | `targets/`, `configs/`, `controller.py`, `executor.py`, `report/` | PR to `dev`; maintainer may self-merge, but affected contributor should review integration diffs when practical |
 
 ---
 
@@ -62,7 +62,7 @@ Based on **GitHub Flow** (simplified trunk-based development):
 
 ```
 main      ← stable; accepts PRs from dev only; maintainer (NO1xes) approves
-dev       ← daily integration; accepts PRs from feat/ and baseline/; one approve required
+dev       ← daily integration; accepts PRs from feat/ and baseline/; maintainer may self-merge when branch protection permits
 │
 ├── feat/NO1xes-<name>      Maintainer feature branches
 ├── feat/collab-<name>      Contributor feature branches
@@ -84,9 +84,34 @@ These roles only affect PR approval and `main` merge rights. Code architecture a
 
 1. Branch from `dev` (not `main`)
 2. Push freely; no review required on your own `feat/` branch
-3. Open PR to `dev` when ready; one approve required
+3. Open PR to `dev` when ready; maintainer may self-merge when branch protection permits, but contributor PRs and integration PRs should still be reviewed by the affected contributor when practical
 4. `exp/` branches: no PR required to `dev`; used for running comparison experiments
 5. `main` accepts PRs from `dev` only; both contributors approve; milestone-level only
+
+### Sequential PRs and conflict handling
+
+When two feature branches are developed in parallel, merge them to `dev` one at a
+time. The second branch should rebase onto the updated `dev` before opening or
+updating its PR:
+
+```bash
+git fetch origin
+git rebase origin/dev
+```
+
+Git can identify textual conflicts, but it cannot decide the research meaning of
+combined changes. Conflict resolution is therefore a manual or coding-agent-assisted
+semantic merge:
+
+- `CHANGELOG.md`: keep both contributors' entries; order by date or topic.
+- `TODO.md`: keep both new tasks and completed checkboxes.
+- `PROJECT_STATUS.md`: update to the latest factual status, test count, and blockers.
+- `EXPERIMENTS.md`: keep one row per profiling run; never overwrite another run.
+- Code files: verify that both edits belong to the same abstraction before combining.
+
+If a PR integrates files or experiment records produced by the other contributor,
+the maintainer can still merge it when repository permissions allow, but should
+show the affected contributor the integration diff first.
 
 ### Commit messages
 
@@ -224,7 +249,7 @@ These can be committed directly with a `docs:` commit message, no prior discussi
 
 Before opening a PR from `feat/` to `dev`:
 
-- [ ] `pytest tests/ -x -q` passes locally (63 tests, no GPU needed)
+- [ ] `pytest tests/ -x -q` passes locally (66 tests, no GPU needed)
 - [ ] GitHub Actions CI is green on the PR page
 - [ ] No imports from frozen modules have changed signatures
 - [ ] If a frozen module was changed: ADR written and both contributors agreed

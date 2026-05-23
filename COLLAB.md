@@ -111,11 +111,47 @@ git push origin feat/<你的分支名>
 
 ```bash
 # 在 GitHub 上开一个 PR：feat/<你的分支名> → dev
-# 另一方 approve，maintainer merge
+# 一般由另一方 review；目前 maintainer 可在权限允许时自审合入 dev
 # 合并后本地同步：
 git checkout dev
 git pull
 ```
+
+### 两个功能分支先后合入 dev
+
+常见情况：你在 `feat/NO1xes-demo` 开发 demo，协作者在 `feat/collab-baselines`
+开发 baseline。两边都从 `dev` 切出，但完成时间不同。
+
+推荐流程：
+
+1. 先完成的一方先开 PR 到 `dev`，通过测试后合入。
+2. 后完成的一方在自己的分支上同步最新 `dev`：
+
+```bash
+git fetch origin
+git rebase origin/dev
+```
+
+3. 如果出现冲突，Git 只能指出同一段文本冲突，不能判断研究含义。需要人或 CC
+   辅助做语义合并：
+   - `CHANGELOG.md`：保留双方新增条目，按时间或主题排列。
+   - `TODO.md`：保留双方新任务和已完成勾选。
+   - `PROJECT_STATUS.md`：以最新事实为准，例如测试数、模块状态、阻塞项。
+   - `EXPERIMENTS.md`：每个 run 一行，不能互相覆盖。
+   - 代码文件：先确认是否真的是同一抽象/接口，不能只为了消除冲突而拼接。
+4. 后完成的一方再开 PR 到 `dev`。
+
+如果一个 PR 整合了另一位贡献者已经合入的模块、实验结果或文档记录，merge 前应把关键 diff
+发给对方看一眼，避免把对方工作语义覆盖掉。
+
+### 如果两个人改的是同一个模块
+
+先判断是“互补修改”还是“设计分歧”：
+
+- 互补修改：由后合入的一方 rebase `dev`，解决冲突，并在 PR 描述里写清楚如何融合。
+- 设计分歧：不要直接硬合到同一个文件。两套实现分别保留在 `exp/NO1xes-*`
+  和 `exp/collab-*` 分支，写 comparison 或 ADR 后，再决定哪套进入 `dev`。
+- 冻结模块（`schema/`、`model/`、`validator.py` 等）：不能单人决定接口融合，必须先讨论并写 ADR。
 
 ### 把 dev 合入 main（里程碑完成时）
 
@@ -311,7 +347,7 @@ bash scripts/install_hooks.sh
 
 ### GitHub Actions（自动，无需操作）
 
-每次向 `dev` 或 `main` push，或者开 PR 时，GitHub 会自动跑全部 63 个 unit test。可在 PR 页面看到结果。两人都不能 merge 一个 CI 红了的 PR（除非 Branch Protection 未开启）。
+每次向 `dev` 或 `main` push，或者开 PR 时，GitHub 会自动跑全部 66 个 unit test。可在 PR 页面看到结果。两人都不能 merge 一个 CI 红了的 PR（除非 Branch Protection 未开启）。
 
 ### 测试分层
 

@@ -64,6 +64,7 @@ def run_workload(state: ProfilingState, output_dir: Path) -> Path:
         # semantic_obs is a BaseCallbackHandler; pass as callback
     )
 
+    event_observers = [semantic_obs, llm_timing_obs, tool_obs]
     resource_obs.attach()
     try:
         for program in programs:
@@ -79,16 +80,25 @@ def run_workload(state: ProfilingState, output_dir: Path) -> Path:
                 )
             except Exception:
                 pass  # observer captures errors; don't abort the full run
+            for obs in event_observers:
+                for event in obs.flush(state):
+                    _tag_event_program(event, program_id, run_id)
+                    write_event(event, events_path)
     finally:
         resource_obs.detach()
         llm_timing_obs.detach()
 
-    all_observers = [semantic_obs, llm_timing_obs, tool_obs, resource_obs]
-    for obs in all_observers:
-        for event in obs.flush(state):
-            write_event(event, events_path)
+    for event in resource_obs.flush(state):
+        write_event(event, events_path)
 
     resource_obs.write_csv(output_dir)
 
     state.events_path = str(events_path)
     return events_path
+
+
+def _tag_event_program(event, program_id: str, run_id: str) -> None:
+    """Assign observer events to the workload program that just ran."""
+    event.program_id = program_id
+    if event.attrs.get("task_id") == run_id:
+        event.attrs["task_id"] = program_id

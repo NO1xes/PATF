@@ -6,6 +6,17 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
+## 2026-05-23 | feat | Milestone 4 — multi-program breakdown aggregation
+
+- `agentprof/analysis/breakdown.py`: added system-level multi-program aggregation while preserving existing top-level llm/tool/wait/unknown fields
+- `run_workload_tool.py`: flushes event observers after each workload program and tags events with the current `program_id`
+- `report/markdown_report.py` and `report/summary_json.py`: include per-program breakdown and slowest-program summary
+- Added 3 unit tests for per-program aggregation, slowest-program reporting, and workload event program tagging
+- `TODO.md`: added post-Milestone 4 test roadmap and two-person task split for BFCL/demo/baseline work
+- `COLLAB.md` and `docs/design/collaboration.md`: clarified sequential PR, semantic conflict resolution, and maintainer self-merge review expectations
+- `baselines/README.md` and `experiments/comparisons/README.md`: expanded qualitative baseline candidate pool and comparison style
+- Verified: 66/66 tests pass with `/disk2/runyuan/envs/agentprof/bin/python -m pytest tests/ -x -q`
+
 ## 2026-05-23 | chore | v0.1.1 — MIT LICENSE + open-source prep
 
 - Added `LICENSE` (MIT)
