@@ -61,15 +61,24 @@ AgentProf/
 Based on **GitHub Flow** (simplified trunk-based development):
 
 ```
-main      ← stable, tagged releases; accepts PRs from dev only
-dev       ← daily integration; accepts PRs from feat/ and baseline/
+main      ← stable; accepts PRs from dev only; maintainer (NO1xes) approves
+dev       ← daily integration; accepts PRs from feat/ and baseline/; one approve required
 │
-├── feat/NO1xes-<name>      Lead contributor feature branches
-├── feat/collab-<name>      Second contributor feature branches
-├── exp/NO1xes-<name>       Lead's experimental / alternative design branches
-├── exp/collab-<name>       Second contributor's experimental branches
+├── feat/NO1xes-<name>      Maintainer feature branches
+├── feat/collab-<name>      Contributor feature branches
+├── exp/NO1xes-<name>       Maintainer's experimental / alternative design branches
+├── exp/collab-<name>       Contributor's experimental branches
 └── baseline/<name>         Baseline construction branches
 ```
+
+### Roles
+
+| Role | GitHub account | Responsibilities |
+| --- | --- | --- |
+| **maintainer** | NO1xes | Repository owner; manages Branch Protection; final approve on dev→main PRs |
+| **contributor** | zcmmy | Develops features, baselines, experiments; PRs reviewed and merged by maintainer |
+
+These roles only affect PR approval and `main` merge rights. Code architecture and module ownership are defined in Section 2 above — both contributors share ownership of core modules equally.
 
 ### Branch lifecycle
 
@@ -169,7 +178,7 @@ When two contributors have conflicting implementations:
 1. **Both implementations stay on their respective `exp/` branches** — neither is deleted
 2. **Write a comparison experiment** (`experiments/comparisons/expXXX/`) running both
 3. **Write an ADR** documenting both options, the comparison results, and the decision
-4. **The lead contributor makes the final call** on which goes to `dev`
+4. **The maintainer (NO1xes) makes the final call** on which goes to `dev`
 5. The non-selected implementation stays on its `exp/` branch permanently — it may be
    revived if the decision is revisited
 
@@ -177,24 +186,62 @@ This ensures no work is lost and all design reasoning is recorded.
 
 ---
 
-## 7. Pre-merge Checklist
+## 7. Modifying Workflow and Process Files
+
+Changes to workflow, process, and collaboration files (`AGENTS.md`, `COLLAB.md`,
+`docs/design/collaboration.md`, `docs/design/onboarding.md`) are **high-impact**:
+they affect how both contributors and their coding agents behave on every future task.
+Mistakes here propagate silently.
+
+### Which files count as workflow files
+
+| File | Why it's high-impact |
+| --- | --- |
+| `AGENTS.md` | Hard rules read by CC on every session; wrong rules cause systematic errors |
+| `COLLAB.md` | Chinese operations guide; both contributors follow it daily |
+| `docs/design/collaboration.md` | Formal spec; defines PR rules, ownership tiers, roles |
+| `docs/design/onboarding.md` | Read by new contributors and CC at session start |
+
+### Rules
+
+1. **Discuss before changing** — state the problem and proposed change explicitly before editing. For CC-initiated changes, CC must describe the intent and get explicit approval.
+2. **One logical change per commit** — do not bundle workflow changes with feature code changes.
+3. **Record in CHANGELOG.md** — use type `docs` and mention which rule changed and why.
+4. **Write an ADR if the change is contested or significant** — e.g. changing ownership tiers, branch strategy, or role definitions.
+5. **Both contributors should read the diff** before it merges to `dev`.
+
+### What does NOT require this process
+
+- Fixing a factual error (stale module status, wrong filename)
+- Updating trigger tables to add a newly-discovered file
+- Typo / formatting fixes
+
+These can be committed directly with a `docs:` commit message, no prior discussion needed.
+
+---
+
+## 8. Pre-merge Checklist
 
 Before opening a PR from `feat/` to `dev`:
 
-- [ ] `pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/test_analysis.py` passes
+- [ ] `pytest tests/ -x -q` passes locally (63 tests, no GPU needed)
+- [ ] GitHub Actions CI is green on the PR page
 - [ ] No imports from frozen modules have changed signatures
 - [ ] If a frozen module was changed: ADR written and both contributors agreed
 - [ ] `CHANGELOG.md` updated
-- [ ] `PROJECT_STATUS.md` updated if a milestone item is done
-- [ ] New observer/planner backend: factory in `__init__.py` updated, `backends.yaml` comment updated
+- [ ] `README.md` milestone list updated if a milestone completed
+- [ ] `agentprof/README.md` status summary updated if module status changed
+- [ ] `PROJECT_STATUS.md` updated if a module status changed
+- [ ] `TODO.md` checked off if a task completed
+- [ ] `EXPERIMENTS.md` updated if a `run_profiling()` run was executed
+- [ ] New observer/planner backend: factory in `__init__.py` updated
 
 Before opening a PR from `dev` to `main`:
 
 - [ ] All of the above
 - [ ] Milestone smoke test passes (see `PROJECT_STATUS.md`)
 - [ ] Both contributors approve the PR
-
----
+- [ ] No private paths, credentials, or machine-specific info in any committed file
 
 ## 8. For Coding Agents (CC)
 
@@ -208,3 +255,48 @@ When a CC is given a task on this repository:
 6. After completing a task: update `PROJECT_STATUS.md` and `CHANGELOG.md`
 7. Do not open PRs to `main` directly; target `dev` or the assigned feature branch
 8. On shared servers: follow resource constraints in `AGENTS.md` Section "Shared Server Resource Constraints"
+
+---
+
+## 9. Versioning and Tags
+
+### Version number format
+
+`vMAJOR.MINOR.PATCH` — [Semantic Versioning](https://semver.org/):
+
+| Part | When to increment |
+| --- | --- |
+| MAJOR | Incompatible architecture change (e.g. replacing the controller loop) |
+| MINOR | New milestone completed; new feature merged to main |
+| PATCH | Bug fix or documentation-only change merged to main |
+
+Current series: `v0.x.y` (pre-release research prototype — MAJOR stays 0 until stable).
+
+### Tag rules
+
+- **Every merge to `main` gets a tag.** No untagged main commits.
+- Tag at the merge commit: `git tag -a v0.x.y -m "short description"` then `git push origin v0.x.y`
+- Tag name must match the version entry in `README_zh.md` version history table.
+- Annotated tags only (`-a`); no lightweight tags.
+
+### What to do when merging to main
+
+```bash
+git checkout main
+git merge dev --no-ff -m "chore: merge dev → main — vX.Y.Z description"
+git tag -a vX.Y.Z -m "vX.Y.Z: short milestone description"
+git push origin main
+git push origin vX.Y.Z
+git checkout dev
+```
+
+Then update `README_zh.md` version history table and commit to dev.
+
+### Chinese README (README_zh.md)
+
+- `README_zh.md` is the authoritative Chinese overview for both contributors.
+- **Required update**: every time `main` is updated (PR merged), update the version
+  history table in `README_zh.md` before or at the merge commit.
+- Other sections (milestone list, machine table, architecture): update when the
+  corresponding section in `README.md` changes.
+- Plain content sync is fine to do in the same commit as the merge.

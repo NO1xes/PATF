@@ -14,16 +14,17 @@ Design documents, weekly reports, and meeting notes.
 | File | Purpose | Audience |
 | --- | --- | --- |
 | `design/onboarding.md` | Module map, maintenance rules, CC task templates | New contributors, CC agents |
-| `design/collaboration.md` | Formal collaboration spec: ownership tiers, branch strategy, experiment management | Both contributors, CC |
+| `design/collaboration.md` | Formal collaboration spec: ownership tiers, branch strategy, versioning | Both contributors, CC |
 | `design/agentprof_design.md` | Deep architecture design and call chain | Both contributors |
 
 ## Reading order for new contributors
 
-1. `../README.md` — project overview
-2. `../AGENTS.md` — hard constraints
-3. `../PROJECT_STATUS.md` — current progress
-4. `design/onboarding.md` — module map and task templates
-5. `design/collaboration.md` — collaboration rules
+1. `../README.md` — project overview (English) / `../README_zh.md` (Chinese)
+2. `../AGENTS.md` — hard constraints; read before writing any code
+3. `../PROJECT_STATUS.md` — current progress, what's blocked, next steps
+4. `../COLLAB.md` — daily workflow: branch commands, PR flow, experiment ops (Chinese)
+5. `design/onboarding.md` — full module map, doc maintenance rules, CC task templates
+6. `design/collaboration.md` — formal spec: ownership tiers, branch strategy, versioning rules
 
 ## Weekly reports
 

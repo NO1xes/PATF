@@ -47,26 +47,31 @@ The three components are strictly separate:
 
 ```bash
 # 1. Clone and switch to working branch
-git clone git@github.com:NO1xes/AgentProf.git
+git clone git@github.com:NO1xes/AgentProf.git   # SSH
+# or: git clone https://<PAT>@github.com/NO1xes/AgentProf.git  # HTTPS+PAT (shared servers)
 cd AgentProf
 git checkout dev
 
 # 2. Create conda environment (Python 3.11)
 conda create -n agentprof python=3.11 -y
 conda activate agentprof
-pip install -e ".[dev]" -i https://pypi.tuna.tsinghua.edu.cn/simple  # China mainland
+pip install -e ".[dev]"
+# China mainland: add -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 3. Copy and fill environment variables
 cp .env.example .env
-# Edit .env: set VLLM_BASE_URL, AGENTPROF_BACKEND, AGENTPROF_PLANNER
+# Edit .env: set VLLM_BASE_URL, VLLM_MODEL, AGENTPROF_MACHINE, etc.
 
-# 4. Verify setup
-bash scripts/verify_env.sh
+# 4. Install pre-commit hook (one-time, optional but recommended)
+bash scripts/install_hooks.sh
 
-# 5. Run controlled workload (requires LLM endpoint in .env)
+# 5. Verify setup (no GPU needed)
+pytest tests/ -x -q   # 63 tests should pass
+
+# 6. Run controlled workload (requires LLM endpoint in .env)
 bash scripts/run_controlled_workload.sh
 
-# 6. View report
+# 7. View report
 cat profiles/<run_id>/report.md
 ```
 
@@ -134,10 +139,10 @@ docker/                   Containerization (future)
 ## Current Milestone
 
 - [x] Milestone 0: Repository skeleton + v0.4 architecture refactor
-- [x] Milestone 1: Observers + analysis implemented (38 tests passing, no LLM/GPU required)
-- [ ] Milestone 2: resource_health, questions, run_workload, end-to-end smoke test
-- [ ] Milestone 3: LLM Planner + full controller loop
-- [ ] Milestone 4: Multi-program workload
+- [x] Milestone 1: Observers + analysis implemented (38 tests, no LLM/GPU required)
+- [x] Milestone 2: resource_health, questions, run_workload, end-to-end smoke test (63 tests)
+- [x] Milestone 3: LLM Planner + full controller loop — smoke test PASSED (nusa100, 2026-05-23)
+- [ ] Milestone 4: Multi-program aggregation + report quality
 - [ ] Milestone 5: Real benchmark subset (BFCL V3)
 
 ## Collaboration
@@ -157,6 +162,6 @@ Key points:
 | machine_id | Role | GPU | Config |
 | --- | --- | --- | --- |
 | local_pc_win11 | Dev + API experiments | None | `configs/machines/local_pc_win11.yaml` |
-| (gpu_server) | vLLM backend | TBD | TBD |
+| nusa100 | LangChain tests, vLLM backend | 5× A100-SXM4-80GB | `configs/machines/nusa100.yaml` |
 
-See [ENVIRONMENT.md](ENVIRONMENT.md) for setup instructions per machine.
+See [ENVIRONMENT.md](ENVIRONMENT.md) for per-machine setup instructions.
