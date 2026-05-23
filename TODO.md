@@ -31,35 +31,36 @@ All items below are testable without LLM/GPU. 38 tests passing.
 - [x] `agentprof/planner/base.py` — BasePlanner ABC (FROZEN)
 - [x] `agentprof/planner/__init__.py` — factory: get_planner()
 - [x] Collaboration structure: backends/ layout, COLLAB.md, docs/design/collaboration.md, ADRs
-- [ ] `agentprof/observers/backends/langchain/semantic_langchain.py` — runtime test (needs langchain_core; langchain installed on nusa100, test pending)
-- [ ] `targets/langchain_react_agent/agent.py` — implement run_task() (needs langchain + vLLM)
+- [x] `agentprof/observers/backends/langchain/semantic_langchain.py` — runtime test (smoke test passed 2026-05-23)
+- [x] `targets/langchain_react_agent/agent.py` — implement run_task() (tested via smoke test 2026-05-23)
 
-## Milestone 2: resource_health + questions + run_workload
+## Milestone 2: resource_health + questions + run_workload ✅
 
 - [x] `agentprof/analysis/resource_health.py` — USE method on resource_snapshot.csv
 - [x] `agentprof/analysis/questions.py` — generate diagnostic questions from breakdown + resource_health
 - [x] `agentprof/tools/run_workload_tool.py` — run target agent, collect events.jsonl
 - [x] `targets/langchain_react_agent/agent.py` — implement `run_task()`
-- [ ] `agentprof/planner/backends/rule/rule_planner.py` — rule-based planner (ablation baseline b)
-- [ ] End-to-end smoke test: run slow_001 task → events.jsonl → timeline.csv → breakdown.json (needs vLLM)
-- [ ] Smoke test: verify breakdown.json has non-zero llm_ms and tool_ms
+- [x] `agentprof/planner/backends/rule/rule_planner.py` — rule-based planner (ablation baseline b)
+- [x] End-to-end smoke test: run slow_001/cpu_001/flaky_001 → events.jsonl → timeline.csv → breakdown.json
+- [x] Smoke test: verified breakdown.json has non-zero llm_ms (34.8%) and tool_ms (65.2%)
 
-## Milestone 3: LLM Planner + Full Controller Loop
+## Milestone 3: LLM Planner + Full Controller Loop ✅
 
 - [x] `agentprof/planner/backends/llm/context_builder.py` — build_planner_context()
 - [x] `agentprof/planner/backends/llm/llm_planner.py` — plan_observation() with LLM call
 - [x] `agentprof/executor.py` — execute approved ObservationPlan
 - [x] `agentprof/controller.py` — full run_profiling() loop
-- [ ] End-to-end test: controller runs, LLM generates ObservationPlan, validator approves, report produced
+- [x] End-to-end test: controller runs, rule planner generates ObservationPlan, validator approves, report.md produced (2026-05-23)
+- [ ] LLM planner smoke test: verify Qwen3 LLM generates valid ObservationPlan JSON (AGENTPROF_PLANNER=llm)
 
-## Milestone 4: Report + Multi-Program Workload
+## Milestone 4: Report Quality + Multi-Program Workload
 
 - [x] `agentprof/report/markdown_report.py` — write_markdown_report()
 - [x] `agentprof/report/summary_json.py` — write_summary_json()
-- [ ] Run all three controlled tasks end-to-end
-- [ ] Review first report.md for correctness
-- [ ] Extend `configs/workload_controlled.yaml` for multiple programs
-- [ ] System aggregation in `agentprof/analysis/breakdown.py`
+- [x] Run all three controlled tasks end-to-end (slow_001, cpu_001, flaky_001 — smoke test 2026-05-23)
+- [x] Review first report.md for correctness (profiles/run_c9ef5986/report.md reviewed)
+- [ ] `configs/workload_controlled.yaml` — verify multi-program config is complete
+- [ ] System-level aggregation across programs in `agentprof/analysis/breakdown.py`
 
 ## Milestone 5: Real Benchmark Subset
 

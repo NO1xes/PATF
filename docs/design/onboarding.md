@@ -189,17 +189,29 @@ cat PROJECT_STATUS.md
 
 每次开发结束前，检查以下文件是否需要更新：
 
-| 文件 | 触发更新的事件 |
-| --- | --- |
-| `CHANGELOG.md` | 任何代码改动，追加一行 |
-| `PROJECT_STATUS.md` | 完成一个 TODO 项、遇到新阻塞、架构有变化 |
-| `TODO.md` | 完成一个 TODO 项（勾选）、新增任务、milestone 变化 |
-| `EXPERIMENTS.md` | 每次跑实验，登记 run_id 和关键结论 |
-| `docs/weekly/YYYY-MM-DD.md` | 每周组会前写一份 |
-| `configs/machines/<id>.yaml` | 新增机器或机器配置发生变化 |
-| `ENVIRONMENT.md` | 新增机器 |
+| 文件 | 触发更新的事件 | 谁维护 |
+| --- | --- | --- |
+| `CHANGELOG.md` | 任何代码改动，追加一行 | CC + 开发者 |
+| `TODO.md` | 完成一个 TODO 项（勾选）、新增任务、milestone 状态变化 | CC + 开发者 |
+| `PROJECT_STATUS.md` | 模块状态变化（stub→implemented）、遇到新阻塞、测试数变化 | CC + 开发者 |
+| `EXPERIMENTS.md` | 每次跑实验，登记 run_id 和关键结论 | 开发者 |
+| `docs/weekly/YYYY-MM-DD.md` | 每周组会前写一份 | 开发者 |
+| `configs/machines/<id>.yaml` | 新增机器或机器的硬件/角色信息变化 | 开发者 |
+| `ENVIRONMENT.md` | 新增机器、依赖版本变化 | 开发者 |
 
-**不需要**经常更新的：`README.md`（架构变化时）、`AGENTS.md`（约束变化时）、`docs/design/`（设计变化时）。
+**较少更新（仅以下情形）：**
+
+| 文件 | 更新时机 |
+| --- | --- |
+| `README.md` | 架构变化、新 milestone 完成、新机器加入 |
+| `AGENTS.md` | 约束规则变化、新模块分工 |
+| `docs/design/agentprof_design.md` | 设计意图变化 |
+| `agentprof/README.md`、`targets/README.md` 等子目录 README | 该模块接口或角色变化 |
+
+**`TODO.md` vs `PROJECT_STATUS.md` 分工：**
+- `TODO.md`：按 Milestone 列任务条目，追踪"还有什么要做"，粒度为一个具体任务。
+- `PROJECT_STATUS.md`：按模块列实现状态（stub / implemented / FROZEN），追踪"哪个文件在什么状态"，粒度为一个文件/模块。
+- 两个文件均需维护，互不替代。
 
 ---
 

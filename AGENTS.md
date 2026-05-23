@@ -43,8 +43,21 @@ FORBIDDEN_ACTIONS = {
 
 ## Required
 
-- After any code change: update `CHANGELOG.md`
-- After any task status change: update `PROJECT_STATUS.md`
+After every code change, update these files before committing:
+
+| File | When to update |
+| --- | --- |
+| `CHANGELOG.md` | Every code change — append one entry |
+| `PROJECT_STATUS.md` | Module status changes (implemented / stub / frozen) |
+| `TODO.md` | Task completed (check box), new task added, milestone status changes |
+
+After every new experiment run:
+- Generate `profiles/<run_id>/metadata.yaml`
+- Update `EXPERIMENTS.md` with run_id and key finding
+
+`README.md` and `AGENTS.md`: update only when architecture or constraints change.
+Sub-directory `README.md` files (e.g. `agentprof/README.md`, `targets/README.md`): update when the module's interface or role changes.
+
 - Every new experiment run must generate `profiles/<run_id>/metadata.yaml`
 - All output to `profiles/<run_id>/`: events.jsonl, timeline.csv, breakdown.json,
   resource_snapshot.csv, resource_health.json, execution_model.json,
