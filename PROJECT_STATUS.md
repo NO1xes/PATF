@@ -9,7 +9,7 @@ Last updated: 2026-05-23
 ## Branch
 
 Active development: `dev`
-Stable: `main` (commit 8323a7a, v0.1 skeleton — merge pending review)
+Stable: `main` (commit d6223f9 — Milestones 0–3 merged 2026-05-23)
 
 ## Module Status
 
@@ -75,11 +75,7 @@ pytest tests/ -q
 
 ## In Progress
 
-- [ ] End-to-end live smoke test (requires vLLM endpoint — start scripts/start_vllm.sh)
-
-## In Progress
-
-- [ ] Merge `refactor/v0.4-architecture` → `main` after review
+_(none — all planned milestones complete)_
 
 ## Next: Milestone 2
 
