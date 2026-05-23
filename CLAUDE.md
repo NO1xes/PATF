@@ -29,12 +29,14 @@ Methodology-driven profiling controller for LLM agent systems. **Profiling only 
 - Do not install into base conda env
 
 ## vLLM on This Server
-- Use **CUDA_VISIBLE_DEVICES=1,6** (currently free GPUs)
+- Use **CUDA_VISIBLE_DEVICES=1** (single card; GPU 1 is currently free)
 - Use port **18796** (confirmed unused; occupied range is 18789–18793)
-- Start: `conda run -n vllm ...` with explicit GPU limits
+- Start: `bash scripts/start_vllm.sh 18796 bg 1`
+- Stop: `bash scripts/stop_vllm.sh`
 - Metrics endpoint: `GET http://localhost:<port>/metrics` (Prometheus, built into vLLM)
 - AgentProf connects via `VLLM_BASE_URL=http://localhost:18796/v1` in `.env`
-- **Always kill the vLLM process after use** — do not leave it running
+- **Always run stop_vllm.sh after use** — GPU memory is not released until all child processes die
+- gpu-memory-utilization: 0.90 (model weights ~60 GB fp16; needs ~72 GB of 80 GB)
 
 ## Key Files (read order for new session)
 1. `README.md` → `AGENTS.md` → `PROJECT_STATUS.md` → `TODO.md`

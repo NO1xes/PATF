@@ -46,7 +46,7 @@ CMD=(
     --host 127.0.0.1
     --trust-remote-code
     --tensor-parallel-size 1
-    --gpu-memory-utilization 0.50
+    --gpu-memory-utilization 0.90
     --max-model-len 8192
     --enable-prefix-caching
     --disable-log-requests
