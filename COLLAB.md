@@ -3,6 +3,14 @@
 > 给两位贡献者看的操作指南，尽量不依赖 git 高级知识。  
 > 遇到任何操作，把命令复制粘贴就能用。不确定时先问各自的 CC。
 
+**新人第一步（按顺序读）：**
+1. [README.md](README.md) — 项目概览、架构图、Quick Start
+2. [AGENTS.md](AGENTS.md) — 硬性约束（CC 和人都必读）
+3. [ENVIRONMENT.md](ENVIRONMENT.md) — 本机环境搭建（conda、.env、机器配置）
+4. 本文件（COLLAB.md）— 日常操作命令、分支约定、实验流程
+5. [docs/design/onboarding.md](docs/design/onboarding.md) — 模块地图、文档维护规则
+6. [PROJECT_STATUS.md](PROJECT_STATUS.md) — 当前进度和下一步任务
+
 ---
 
 ## 0. 两位贡献者的角色
