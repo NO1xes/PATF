@@ -154,6 +154,7 @@ Key points:
 - Work on `dev` branch; open PRs to `dev`, not `main`
 - `feat/NO1xes-<name>` and `feat/collab-<name>` for feature branches
 - `exp/<name>` for experimental / alternative design branches
+- `public` branch is the GitHub default (repo landing page only) — **do not use for development**
 - Switching backends: set `AGENTPROF_BACKEND` / `AGENTPROF_PLANNER` in `.env`
 - Design disagreements: write an ADR in `experiments/designs/`
 
