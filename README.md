@@ -1,41 +1,34 @@
 # PATF
 
-**Performance Analysis and Testing Framework**
+**Precipitation and Atmospheric Time-series Framework**
 
-A lightweight framework for systematic performance analysis and testing of AI pipeline components.
-
----
-
-## Overview
-
-PATF provides tooling for:
-
-- Structured performance data collection across pipeline stages
-- Configurable analysis backends
-- Report generation for latency and resource utilization
-
-This repository is under active development. Core interfaces are subject to change.
+Early-stage personal project for working with meteorological time-series data from weather station networks. Not ready for general use.
 
 ---
 
-## Status
+## Rough Scope
 
-| Component | Status |
-| --- | --- |
-| Data collection layer | In progress |
-| Analysis engine | In progress |
-| Report generation | In progress |
-| Benchmark adapters | Planned |
+- Reading raw sensor output from station networks
+- Aligning and gap-filling time-series across data sources
+- Basic aggregation (daily/monthly summaries)
 
----
-
-## Requirements
-
-- Python 3.11+
-- See `requirements.txt` for dependencies (not yet published)
+No stable API yet. Structure will change.
 
 ---
 
-## License
+## Layout (in progress)
 
-MIT License
+```
+patf/
+  io/          reading sensor data
+  align/       time alignment (stub)
+  stats/       aggregation (not started)
+configs/       example station configs
+docs/          working notes
+```
+
+---
+
+## Dependencies
+
+Python 3.10+, numpy, pandas. No install script yet.

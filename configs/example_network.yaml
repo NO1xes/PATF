@@ -1,0 +1,12 @@
+# network_id: placeholder
+# Fill in station details before use.
+
+network_id: example_network
+description: "Example station network — replace with real values"
+stations:
+  - id: STA001
+    lat: 0.0
+    lon: 0.0
+    elevation_m: 0
+    variables: [temp_c, precip_mm, wind_ms]
+    freq_min: 10
