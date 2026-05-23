@@ -36,11 +36,12 @@ All items below are testable without LLM/GPU. 38 tests passing.
 
 ## Milestone 2: resource_health + questions + run_workload
 
-- [ ] `agentprof/analysis/resource_health.py` — USE method on resource_snapshot.csv
-- [ ] `agentprof/analysis/questions.py` — generate diagnostic questions from breakdown + resource_health
-- [ ] `agentprof/tools/run_workload_tool.py` — run target agent, collect events.jsonl
+- [x] `agentprof/analysis/resource_health.py` — USE method on resource_snapshot.csv
+- [x] `agentprof/analysis/questions.py` — generate diagnostic questions from breakdown + resource_health
+- [x] `agentprof/tools/run_workload_tool.py` — run target agent, collect events.jsonl
+- [x] `targets/langchain_react_agent/agent.py` — implement `run_task()`
 - [ ] `agentprof/planner/backends/rule/rule_planner.py` — rule-based planner (ablation baseline b)
-- [ ] End-to-end smoke test: run slow_001 task → events.jsonl → timeline.csv → breakdown.json
+- [ ] End-to-end smoke test: run slow_001 task → events.jsonl → timeline.csv → breakdown.json (needs vLLM)
 - [ ] Smoke test: verify breakdown.json has non-zero llm_ms and tool_ms
 
 ## Milestone 3: LLM Planner + Full Controller Loop

@@ -6,7 +6,16 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
-## 2026-05-21 | chore | nusa100 onboarding + environment setup
+## 2026-05-21 | feat | Milestone 2 — resource_health, questions, run_workload, agent run_task
+
+- Implemented `agentprof/analysis/resource_health.py` — USE-method analysis on resource_snapshot.csv; flags CPU/memory saturation, disk/network pressure; returns structured health dict
+- Implemented `agentprof/analysis/questions.py` — generates prioritized diagnostic questions from breakdown + resource_health + ExecutionModel; feeds into LLM planner
+- Implemented `agentprof/tools/run_workload_tool.py` — wires target agent + baseline observers + storage; writes events.jsonl + resource_snapshot.csv
+- Implemented `targets/langchain_react_agent/agent.py` `run_task()` — invokes LangGraph ReAct agent, returns final answer string
+- Added `tests/test_milestone2.py` — 18 tests for resource_health and questions (no LLM/GPU)
+- 56/56 tests passing (38 Milestone 1 + 18 Milestone 2)
+
+
 
 - Fixed `pyproject.toml` build backend: `setuptools.backends.legacy:build` → `setuptools.build_meta` (resolves `pip install -e` failure)
 - Added `configs/machines/nusa100.yaml` — shared Linux server (xtraa100), 5× A100-SXM4-80GB, 64 CPU, 1 TiB RAM

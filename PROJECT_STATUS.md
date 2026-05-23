@@ -31,14 +31,14 @@ Stable: `main` (commit 8323a7a, v0.1 skeleton — merge pending review)
 | `agentprof/planner/backends/rule/rule_planner.py` | stub | Milestone 2, ablation baseline |
 | `agentprof/analysis/timeline.py` | implemented | start/end pairing → SpanRecord |
 | `agentprof/analysis/breakdown.py` | implemented | llm/tool/wait split |
-| `agentprof/analysis/resource_health.py` | stub | Milestone 2 |
-| `agentprof/analysis/questions.py` | stub | Milestone 2 |
+| `agentprof/analysis/resource_health.py` | implemented | USE method on resource_snapshot.csv |
+| `agentprof/analysis/questions.py` | implemented | generates diagnostic questions from breakdown + health |
 | `agentprof/executor.py` | stub | Milestone 3 |
 | `agentprof/controller.py` | stub | Milestone 3 |
 | `agentprof/report/` | stub | Milestone 4 |
-| `agentprof/tools/run_workload_tool.py` | stub | Milestone 2 |
+| `agentprof/tools/run_workload_tool.py` | implemented | wires agent + observers + storage |
 | `targets/langchain_react_agent/tools.py` | implemented | slow/cpu/flaky tools |
-| `targets/langchain_react_agent/agent.py` | stub | needs langchain + vLLM |
+| `targets/langchain_react_agent/agent.py` | implemented | run_task() done; needs vLLM for live test |
 | `baselines/langfuse_adapter/` | stub | comparison baseline a |
 | `baselines/opentelemetry_adapter/` | stub | comparison baseline a |
 | `baselines/rule_based_profiler/` | stub | ablation baseline b |
@@ -51,16 +51,18 @@ Stable: `main` (commit 8323a7a, v0.1 skeleton — merge pending review)
 - `tests/test_storage.py` — event read/write
 - `tests/test_validator.py` — forbidden actions, budget
 - `tests/test_analysis.py` — timeline, breakdown, registry from_yaml
+- `tests/test_milestone2.py` — resource_health, questions (18 tests)
 
-Pending (needs langchain):
+Pending (needs vLLM):
 
-- `tests/test_tools.py` — slow/cpu/flaky tool behavior
+- `tests/test_tools.py` — slow/cpu/flaky tool behavior (langchain invoke path)
+- End-to-end smoke test: run_workload → events.jsonl → timeline → breakdown
 
 Run with:
 
 ```bash
 conda activate agentprof
-pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/test_analysis.py -v
+pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/test_analysis.py tests/test_milestone2.py -v
 ```
 
 ## Completed
@@ -68,6 +70,7 @@ pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/
 - [x] Milestone 0: Repository skeleton
 - [x] v0.4 architecture refactor
 - [x] Milestone 1: observers (resource_snapshot, tool_events, llm_client_timing, semantic_langchain), analysis (timeline, breakdown), ObserverRegistry.from_yaml()
+- [x] Milestone 2 (partial): resource_health, questions, run_workload_tool, agent run_task() — 56 tests passing
 
 ## In Progress
 
