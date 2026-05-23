@@ -255,3 +255,48 @@ When a CC is given a task on this repository:
 6. After completing a task: update `PROJECT_STATUS.md` and `CHANGELOG.md`
 7. Do not open PRs to `main` directly; target `dev` or the assigned feature branch
 8. On shared servers: follow resource constraints in `AGENTS.md` Section "Shared Server Resource Constraints"
+
+---
+
+## 9. Versioning and Tags
+
+### Version number format
+
+`vMAJOR.MINOR.PATCH` — [Semantic Versioning](https://semver.org/):
+
+| Part | When to increment |
+| --- | --- |
+| MAJOR | Incompatible architecture change (e.g. replacing the controller loop) |
+| MINOR | New milestone completed; new feature merged to main |
+| PATCH | Bug fix or documentation-only change merged to main |
+
+Current series: `v0.x.y` (pre-release research prototype — MAJOR stays 0 until stable).
+
+### Tag rules
+
+- **Every merge to `main` gets a tag.** No untagged main commits.
+- Tag at the merge commit: `git tag -a v0.x.y -m "short description"` then `git push origin v0.x.y`
+- Tag name must match the version entry in `README_zh.md` version history table.
+- Annotated tags only (`-a`); no lightweight tags.
+
+### What to do when merging to main
+
+```bash
+git checkout main
+git merge dev --no-ff -m "chore: merge dev → main — vX.Y.Z description"
+git tag -a vX.Y.Z -m "vX.Y.Z: short milestone description"
+git push origin main
+git push origin vX.Y.Z
+git checkout dev
+```
+
+Then update `README_zh.md` version history table and commit to dev.
+
+### Chinese README (README_zh.md)
+
+- `README_zh.md` is the authoritative Chinese overview for both contributors.
+- **Required update**: every time `main` is updated (PR merged), update the version
+  history table in `README_zh.md` before or at the merge commit.
+- Other sections (milestone list, machine table, architecture): update when the
+  corresponding section in `README.md` changes.
+- Plain content sync is fine to do in the same commit as the merge.

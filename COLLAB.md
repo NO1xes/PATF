@@ -306,3 +306,30 @@ bash scripts/install_hooks.sh
 | 快速核心 | `pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/test_analysis.py -x -q` | 无需 GPU | pre-commit hook 运行 |
 | 全部单元 | `pytest tests/ -x -q` | 无需 GPU | CI / PR 前手动 |
 | 端到端 | `AGENTPROF_PLANNER=rule python -m agentprof...` | 需要 vLLM | milestone smoke test |
+
+---
+
+## 12. 版本号与 Tag 规则
+
+版本号格式：`vMAJOR.MINOR.PATCH`
+
+| 部分 | 何时递增 |
+| --- | --- |
+| MAJOR | 不兼容的架构变更（目前保持 0） |
+| MINOR | 新里程碑完成并合入 main |
+| PATCH | bug 修复或纯文档变更合入 main |
+
+**每次合入 main 都必须打 tag，流程如下：**
+
+```bash
+git checkout main
+git merge dev --no-ff -m "chore: merge dev → main — vX.Y.Z 说明"
+git tag -a vX.Y.Z -m "vX.Y.Z: 简短说明"
+git push origin main
+git push origin vX.Y.Z
+git checkout dev
+```
+
+**中文 README（README_zh.md）：**
+- 每次合入 main 时，必须更新其中的版本历史表。
+- 其他章节（里程碑、机器表等）随英文 README.md 同步更新。
