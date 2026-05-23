@@ -10,7 +10,7 @@ This document tells you how to set up the environment on any machine.
 | machine_id | OS | GPU | Role | Shared | Config file |
 | --- | --- | --- | --- | --- | --- |
 | local_pc_win11 | Windows 11 Home (China) | None | API experiments, dev | No | `configs/machines/local_pc_win11.yaml` |
-| nusa100 | Ubuntu Linux (xtraa100) | 5× A100-SXM4-80GB | LangChain tests, vLLM backend | Yes | `configs/machines/nusa100.yaml` |
+| nusa100 | Ubuntu Linux | 5× A100-SXM4-80GB | LangChain tests, vLLM backend | Yes | `configs/machines/nusa100.yaml` |
 
 ---
 
@@ -51,7 +51,7 @@ conda activate agentprof
 pip install -e ".[dev]"
 ```
 
-> Python 3.11 is recommended for compatibility with LangChain and vLLM. The local PC currently runs 3.13 — if dependency issues arise, create the env with 3.11 explicitly.
+> Python 3.11 is recommended for compatibility with LangChain and vLLM.
 
 ### 3. Copy and fill environment variables
 
@@ -60,18 +60,26 @@ cp .env.example .env
 # Edit .env with your actual values
 ```
 
+Key fields (see `.env.example` for full list):
+- `VLLM_BASE_URL`, `VLLM_MODEL` — LLM backend endpoint
+- `VLLM_PYTHON`, `HF_HOME` — GPU server only; paths to vllm env and HF cache
+- `AGENTPROF_MACHINE` — machine_id (e.g. `nusa100`, `local_pc_win11`)
+- `AGENTPROF_WORK_DIR` — your local workspace root
+- `GITHUB_PAT` — for git push on shared servers (never commit)
+
 ### 4. Verify setup
 
 ```bash
-python -c "import langchain; print(langchain.__version__)"
-python -m pytest tests/ -x -q  # once tests exist
+conda activate agentprof
+pytest tests/ -x -q
+# 63 tests should pass without GPU or LLM
 ```
 
 ---
 
 ## Machine-Specific Notes
 
-### nusa100 (shared Linux server, hostname: xtraa100, 5× A100-SXM4-80GB)
+### nusa100 (shared Linux server, 5× A100-SXM4-80GB)
 
 This is a shared machine. Follow all resource constraints in `AGENTS.md` before running anything.
 
@@ -87,23 +95,28 @@ git checkout dev
 git config --local user.name "your-github-handle"
 git config --local user.email "your@email.com"
 
-# 3. Conda env is already created at /disk2/runyuan/envs/agentprof
-#    If recreating: conda create -n agentprof python=3.11 -y
+# 3. Activate conda env (create if not present: conda create -n agentprof python=3.11 -y)
 conda activate agentprof
 
-# 4. Install package in editable mode (all deps already installed)
+# 4. Install package in editable mode
 pip install -e ".[dev]"
 
-# 5. Copy and fill .env
+# 5. Copy local config template and fill in your paths
+cp configs/machines/nusa100.local.yaml.example configs/machines/nusa100.local.yaml
+# Edit nusa100.local.yaml with your actual paths (gitignored)
+
+# 6. Copy and fill .env (see .env.example for all fields)
 cp .env.example .env
-# Required fields:
+# Required for this machine:
+#   VLLM_PYTHON=/your/envs/vllm/bin/python
+#   HF_HOME=/your/cache/huggingface
 #   VLLM_BASE_URL=http://localhost:<port>/v1
 #   AGENTPROF_MACHINE=nusa100
-#   AGENTPROF_WORK_DIR=/disk2/runyuan/projects/AgentProf
-#   GITHUB_PAT=<your-token>   (needed for git push; never commit this file)
+#   AGENTPROF_WORK_DIR=/your/workspace/AgentProf
+#   GITHUB_PAT=<your-token>
 
-# 6. Verify (Tier 1 — no GPU, no LLM needed)
-pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/test_analysis.py -v
+# 7. Verify (no GPU needed)
+pytest tests/ -x -q
 ```
 
 **Resource limits (enforce before any run):**
@@ -111,28 +124,23 @@ pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/
 ```bash
 nproc          # 64 total — use at most 8
 free -h        # ~1 TiB total — use at most 128 GiB
-nvidia-smi     # 5× A100 80GB — use 1 GPU, at most 10 GiB GPU memory
-
-ulimit -u 32   # max 32 child processes
-# Set CUDA_VISIBLE_DEVICES=<single id> before any vLLM run
+nvidia-smi     # 5× A100 80GB — use at most 1 GPU (CUDA_VISIBLE_DEVICES=<id>)
 ```
 
 **Do NOT:**
 
-- `pip install` or `conda install` into base environment (`/disk2/runyuan/miniconda3`)
+- Install into the shared base conda environment
 - Write output outside `$AGENTPROF_WORK_DIR`
-- Run `pytest` without `-x` on login node
-- Leave zombie processes — always call `observer.detach()` and clean up
+- Leave zombie processes — always call `stop_vllm.sh` after GPU runs
+- Run `pytest` without `-x` on the login node
 
 See `AGENTS.md` "Shared Server Resource Constraints" for the full rules.
 
 ### local_pc_win11 (Windows 11, China mainland, no GPU)
 
-- conda base: `E:\miniconda3`
 - Git auth: SSH (`git@github.com`), confirmed working
 - Network: China mainland — use pip mirror and HuggingFace mirror (see below)
 - Role: API-based experiments only. vLLM does NOT run here.
-- Workspace: `d:/JediXing/Documents/HUST/class/26spring/Multiagent/agent4profiling/stage1-knowledge/2026-05-13/agentprof`
 
 **pip mirror (Tsinghua, recommended in China):**
 ```bash
@@ -153,11 +161,12 @@ HF_ENDPOINT=https://hf-mirror.com
 
 ## Adding a New Machine
 
-1. Run the experiment on the new machine and note: OS, GPU, Python version, conda/venv path, git auth method, network environment, shared/personal.
-2. Copy `configs/machines/local_pc_win11.yaml` as a template.
-3. Fill in the new machine's values.
-4. Add a row to the table above.
-5. Commit the new machine config file.
+1. Note: OS, GPU, Python version, git auth method, network, shared/personal.
+2. Create `configs/machines/<id>.yaml` (hardware/role only — no private paths).
+3. Create `configs/machines/<id>.local.yaml` from the `.example` template (gitignored).
+4. Add `.env` entries for `VLLM_PYTHON`, `HF_HOME`, `AGENTPROF_WORK_DIR` etc.
+5. Add a row to the Registered Machines table above.
+6. Commit only the public `<id>.yaml`; `.local.yaml` and `.env` stay local.
 
 ---
 

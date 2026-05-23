@@ -1,69 +1,48 @@
-# Machine Configuration: overseas_server
-# Shared Linux server (overseas). Role: LangChain/LangGraph tests, vLLM backend.
-# This is a SHARED machine — enforce all resource limits before running anything.
-# See AGENTS.md "Shared Server Resource Constraints" for hard limits.
+# Machine Configuration: overseas_server (template)
+# Generic template for a shared overseas Linux GPU server.
+# Copy and rename to <machine_id>.yaml, fill in hardware values.
+# Private paths (conda env, workspace, ports) go in <machine_id>.local.yaml (gitignored).
 #
-# Fill in actual values once the server is confirmed.
+# See configs/machines/nusa100.local.yaml.example for the local config template.
 
-machine_id: overseas_server
-owner: NO1xes          # primary user; collab contributor also has access
-os: Linux              # fill in distro/version when confirmed
+machine_id: overseas_server   # replace with actual machine id
+os: Linux
 os_version: TBD
 shared: true
 
 hardware:
-  gpu: TBD             # fill in GPU model when confirmed
+  gpu: TBD             # e.g. "NVIDIA A100-SXM4-80GB"
   gpu_count: TBD
-  notes: >
-    Shared GPU server. Use at most 1 GPU (CUDA_VISIBLE_DEVICES=<single id>).
-    GPU memory limit: ≤ 1/8 of total per GPU.
+  gpu_memory_per: TBD  # e.g. "80 GiB"
+  cpu_cores: TBD
+  ram_total: TBD
 
-python:
-  version: "3.11"
-  manager: conda
-  conda_base: TBD      # fill in path, e.g. /opt/miniconda3 or ~/miniconda3
-  recommended_env_name: agentprof
-  recommended_python: "3.11"
-
-workspace:
-  path: TBD            # fill in your assigned work directory
-  profile_output: "$AGENTPROF_WORK_DIR/profiles"
-  notes: "All output must stay under $AGENTPROF_WORK_DIR. Disk quota: ≤ 20 GB."
+resource_limits:
+  cpu_cores_max: TBD   # e.g. 1/8 of total
+  ram_max: TBD
+  gpu_count_max: 1
+  gpu_memory_utilization_max: 0.90
+  max_processes: 32
+  disk_gb: 20
 
 git:
-  auth_method: https_pat   # SSH key not available on shared server
+  auth_method: https_pat   # SSH key typically not available on shared servers
   remote: "https://github.com/NO1xes/AgentProf.git"
   config_scope: local      # MUST use --local, never --global on shared servers
-  notes: >
-    Clone with: git clone https://<PAT>@github.com/NO1xes/AgentProf.git
-    Store PAT in .env as GITHUB_PAT. Never hardcode in scripts.
-    Set identity: git config --local user.name / user.email
 
 network:
   region: overseas
-  pip_mirror: null         # no mirror needed overseas; use default PyPI
+  pip_mirror: null
   hf_mirror: null
-  github_ssh: unknown      # verify on first login; use HTTPS+PAT as fallback
-  notes: "Direct PyPI and GitHub access expected. Verify on first login."
-
-vllm:
-  available: true          # GPU available; confirm model and port assignment
-  model: "Qwen/Qwen3-30B-A3B"
-  port: TBD                # assigned port — check with sysadmin
-  notes: >
-    Start with: bash scripts/start_vllm.sh
-    Set VLLM_BASE_URL=http://localhost:<port>/v1 in .env
-    Use --gpu-memory-utilization to stay within 1/8 GPU memory limit.
-
-resource_limits:
-  cpu_fraction: "1/8"      # use taskset or Docker --cpus
-  ram_fraction: "1/8"      # use ulimit -v or Docker --memory
-  gpu_fraction: "1/8"      # set via --gpu-memory-utilization in vLLM
-  max_processes: 32        # ulimit -u 32
-  disk_gb: 20              # under $AGENTPROF_WORK_DIR
 
 capabilities:
-  - langchain_tests        # langchain + langgraph installed
-  - vllm_backend           # can run vLLM with GPU
-  - tier2_integration      # end-to-end smoke tests with LLM API
-  - tier3_experiments      # full workload via Docker or SLURM
+  - langchain_tests
+  - vllm_backend
+  - tier2_integration
+  - tier3_experiments
+
+vllm:
+  model: "Qwen/Qwen3-30B-A3B-Instruct-2507"
+  tensor_parallel_size: 1
+  tool_call_parser: hermes
+  notes: "See .env for VLLM_BASE_URL, VLLM_PYTHON, HF_HOME. See scripts/start_vllm.sh for startup."

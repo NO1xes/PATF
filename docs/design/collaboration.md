@@ -76,7 +76,7 @@ dev       ← daily integration; accepts PRs from feat/ and baseline/; one appro
 | Role | GitHub account | Responsibilities |
 | --- | --- | --- |
 | **maintainer** | NO1xes | Repository owner; manages Branch Protection; final approve on dev→main PRs |
-| **contributor** | _collaborator account_ | Develops features, baselines, experiments; PRs reviewed and merged by maintainer |
+| **contributor** | zcmmy | Develops features, baselines, experiments; PRs reviewed and merged by maintainer |
 
 These roles only affect PR approval and `main` merge rights. Code architecture and module ownership are defined in Section 2 above — both contributors share ownership of core modules equally.
 
@@ -220,24 +220,28 @@ These can be committed directly with a `docs:` commit message, no prior discussi
 
 ---
 
-## 7. Pre-merge Checklist
+## 8. Pre-merge Checklist
 
 Before opening a PR from `feat/` to `dev`:
 
-- [ ] `pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/test_analysis.py` passes
+- [ ] `pytest tests/ -x -q` passes locally (63 tests, no GPU needed)
+- [ ] GitHub Actions CI is green on the PR page
 - [ ] No imports from frozen modules have changed signatures
 - [ ] If a frozen module was changed: ADR written and both contributors agreed
 - [ ] `CHANGELOG.md` updated
-- [ ] `PROJECT_STATUS.md` updated if a milestone item is done
-- [ ] New observer/planner backend: factory in `__init__.py` updated, `backends.yaml` comment updated
+- [ ] `README.md` milestone list updated if a milestone completed
+- [ ] `agentprof/README.md` status summary updated if module status changed
+- [ ] `PROJECT_STATUS.md` updated if a module status changed
+- [ ] `TODO.md` checked off if a task completed
+- [ ] `EXPERIMENTS.md` updated if a `run_profiling()` run was executed
+- [ ] New observer/planner backend: factory in `__init__.py` updated
 
 Before opening a PR from `dev` to `main`:
 
 - [ ] All of the above
 - [ ] Milestone smoke test passes (see `PROJECT_STATUS.md`)
 - [ ] Both contributors approve the PR
-
----
+- [ ] No private paths, credentials, or machine-specific info in any committed file
 
 ## 8. For Coding Agents (CC)
 

@@ -10,7 +10,7 @@
 | 角色标识 | GitHub 账号 | 职责 |
 | --- | --- | --- |
 | **maintainer**（维护者） | NO1xes | 仓库所有者；管理 Branch Protection；PR dev→main 最终审批 |
-| **contributor**（协作者） | _对方账号_ | 开发功能、基线、实验；PR 经 maintainer approve 合入 dev |
+| **contributor**（协作者） | zcmmy | 开发功能、基线、实验；PR 经 maintainer approve 合入 dev |
 
 这两个角色**只影响 PR 审批和 main 合并权限**，代码架构和模块分工见 `AGENTS.md`。
 
@@ -19,7 +19,7 @@
 ## 1. 仓库结构一眼看懂
 
 ```text
-agentprof/               核心包（两人共同维护，改动需知会对方）
+agentprof/               核心包（两人共同维护，改动需知会另一位贡献者）
   schema/                数据结构 — 冻结，单人不得改动接口
   model/                 注册表/模型 — 冻结
   validator.py           约束执行 — 冻结
@@ -143,16 +143,16 @@ AGENTPROF_PLANNER=rule python -m agentprof.runner ...
 
 ---
 
-## 6. 查看对方的不同设计
+## 6. 查看另一位贡献者的不同设计
 
-对方在 `exp/collab-xxx` 分支上有一套完全不同的实现，想跑对比实验：
+另一位贡献者在 `exp/collab-xxx` 或 `exp/NO1xes-xxx` 分支上有一套完全不同的实现，想跑对比实验：
 
 ```bash
-# 步骤 1：在本地同时检出对方分支（不影响你的工作）
+# 步骤 1：在本地检出另一方的分支（不影响自己的工作）
 git fetch origin
 git checkout exp/collab-xxx
 
-# 步骤 2：跑对方的实现
+# 步骤 2：跑另一方的实现
 python -m agentprof.runner --config ...
 
 # 步骤 3：切回自己的分支
@@ -161,10 +161,10 @@ git checkout feat/<你的分支名>
 # 不需要 merge，两套代码可以独立运行
 ```
 
-如果要把对方的某个文件合入你的分支（cherry-pick 单个文件）：
+如果要把另一方的某个文件合入自己的分支（cherry-pick 单个文件）：
 
 ```bash
-# 只把对方分支的某一个文件复制到你的工作区
+# 只把另一方分支的某一个文件复制到自己的工作区
 git checkout exp/collab-xxx -- agentprof/analysis/breakdown.py
 # 然后正常 commit
 ```
@@ -274,3 +274,27 @@ git branch         # 列出所有本地分支，* 是当前分支
 - 错别字/格式修复
 
 这类改动直接提交，commit 类型写 `docs:` 即可。
+
+---
+
+## 11. 自动化测试
+
+### 本地 pre-commit hook（推荐每人安装一次）
+
+```bash
+bash scripts/install_hooks.sh
+```
+
+安装后，每次 `git commit` 涉及 `.py` 文件时，会自动跑 4 个核心 unit test（约 5 秒，无需 GPU）。失败则阻止提交。紧急情况可以绕过：`git commit --no-verify`。
+
+### GitHub Actions（自动，无需操作）
+
+每次向 `dev` 或 `main` push，或者开 PR 时，GitHub 会自动跑全部 63 个 unit test。可在 PR 页面看到结果。两人都不能 merge 一个 CI 红了的 PR（除非 Branch Protection 未开启）。
+
+### 测试分层
+
+| 层级 | 命令 | 条件 | 用途 |
+| --- | --- | --- | --- |
+| 快速核心 | `pytest tests/test_schema.py tests/test_storage.py tests/test_validator.py tests/test_analysis.py -x -q` | 无需 GPU | pre-commit hook 运行 |
+| 全部单元 | `pytest tests/ -x -q` | 无需 GPU | CI / PR 前手动 |
+| 端到端 | `AGENTPROF_PLANNER=rule python -m agentprof...` | 需要 vLLM | milestone smoke test |
