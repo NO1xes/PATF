@@ -12,7 +12,13 @@ Each subdirectory contains one comparison experiment: configuration, results, an
 | --- | --- | --- | --- |
 | exp001 | LLM planner vs rule-based planner (ablation) | planned | TBD |
 | exp002 | LangChain backend vs DeepAgent backend | planned | TBD |
-| exp003 | AgentProf vs Langfuse trace coverage | planned | TBD |
+| exp003 | AgentProf vs observability/profiling baselines (Langfuse, Phoenix/OpenInference, AgentOps, AgentSight, and relevant AgentProf-named projects) | planned | collab survey + NO1xes demo |
+
+## Comparison style
+
+These comparisons are motivation-oriented. They do not need to isolate one variable
+perfectly. Record what each baseline can observe, what it cannot attribute, what
+kind of report or UI it produces, and which gaps motivate AgentProf's methodology.
 
 ## How to add a new comparison experiment
 

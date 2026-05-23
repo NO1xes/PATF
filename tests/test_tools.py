@@ -12,6 +12,8 @@ import pytest
 # Import the underlying Python functions (not the LangChain @tool wrappers)
 # to test behavior directly without needing a LangChain agent.
 from targets.langchain_react_agent import tools as tool_module
+from agentprof.schema.events import AgentEvent
+from agentprof.tools.run_workload_tool import _tag_event_program
 
 
 def reset_flaky():
@@ -68,3 +70,23 @@ class TestFlakyTool:
         # second call for task_a should succeed
         result = tool_module.flaky_tool.invoke({"task_id": "task_a"})
         assert "succeeded" in result.lower()
+
+
+class TestRunWorkloadProgramTagging:
+    def test_rewrites_program_id_and_task_id(self):
+        event = AgentEvent(
+            event_id="evt_test",
+            trace_id="trace_run_123",
+            program_id="run_123",
+            span_id="span_run",
+            parent_span_id=None,
+            layer="agent_semantic",
+            event_type="start",
+            name="run",
+            ts=1.0,
+            attrs={"task_id": "run_123"},
+            source_observer="semantic_langchain",
+        )
+        _tag_event_program(event, "slow_001", "run_123")
+        assert event.program_id == "slow_001"
+        assert event.attrs["task_id"] == "slow_001"

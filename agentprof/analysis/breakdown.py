@@ -33,6 +33,27 @@ def compute_breakdown(spans: list[SpanRecord]) -> dict:
       "dominant_component": "tool"
     }
     """
+    breakdown = _compute_flat_breakdown(spans)
+
+    program_ids = sorted({s.program_id for s in spans if s.program_id})
+    per_program = {
+        program_id: _compute_flat_breakdown([s for s in spans if s.program_id == program_id])
+        for program_id in program_ids
+    }
+    breakdown["program_count"] = len(per_program)
+    breakdown["programs"] = per_program
+    if per_program:
+        slowest_program_id = max(per_program, key=lambda pid: per_program[pid]["total_ms"])
+        breakdown["slowest_program_id"] = slowest_program_id
+        breakdown["slowest_program_ms"] = per_program[slowest_program_id]["total_ms"]
+    else:
+        breakdown["slowest_program_id"] = None
+        breakdown["slowest_program_ms"] = 0.0
+
+    return breakdown
+
+
+def _compute_flat_breakdown(spans: list[SpanRecord]) -> dict:
     # Use only leaf-level spans to avoid double-counting parent wrappers.
     # A span is a leaf if no other span has it as parent_span_id.
     parent_ids = {s.parent_span_id for s in spans if s.parent_span_id}

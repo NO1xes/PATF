@@ -75,6 +75,26 @@ def write_markdown_report(state: ProfilingState, output_dir: Path) -> Path:
         p(f"Dominant component: **{bd.get('dominant_component', 'none')}**  "
           f"| LLM calls: {bd.get('llm_calls', 0)} | Tool calls: {bd.get('tool_calls', 0)} "
           f"| Errors: {bd.get('errors', 0)}")
+        programs = bd.get("programs", {})
+        if programs:
+            p("")
+            p("| Program | Time (ms) | Dominant | LLM | Tool | Wait/Retry | Unknown | Errors |")
+            p("| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: |")
+            for program_id, program_bd in sorted(programs.items()):
+                p(
+                    f"| `{program_id}` | {program_bd.get('total_ms', 0):.0f} | "
+                    f"{program_bd.get('dominant_component', 'none')} | "
+                    f"{program_bd.get('llm_pct', 0):.1%} | "
+                    f"{program_bd.get('tool_pct', 0):.1%} | "
+                    f"{program_bd.get('wait_retry_pct', 0):.1%} | "
+                    f"{program_bd.get('unknown_pct', 0):.1%} | "
+                    f"{program_bd.get('errors', 0)} |"
+                )
+            p("")
+            p(
+                f"Slowest program: `{bd.get('slowest_program_id')}` "
+                f"({bd.get('slowest_program_ms', 0):.0f} ms)"
+            )
     else:
         p("_(breakdown not available)_")
     p("")

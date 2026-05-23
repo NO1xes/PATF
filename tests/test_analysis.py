@@ -13,6 +13,7 @@ import pytest
 from agentprof.analysis.timeline import build_timeline, write_timeline_csv
 from agentprof.analysis.breakdown import compute_breakdown, write_breakdown_json
 from agentprof.model.observer_registry import ObserverRegistry
+from agentprof.schema.spans import SpanRecord
 
 FIXTURE = Path(__file__).parent / "fixtures" / "sample_events.jsonl"
 OBSERVERS_YAML = Path(__file__).parent.parent / "configs" / "observers.yaml"
@@ -60,6 +61,27 @@ class TestComputeBreakdown:
     def _spans(self, tmp_path):
         return build_timeline(FIXTURE, tmp_path)
 
+    def _span(
+        self,
+        program_id: str,
+        span_id: str,
+        span_kind: str,
+        duration_ms: float,
+        error: bool = False,
+    ) -> SpanRecord:
+        return SpanRecord(
+            trace_id="trace_test",
+            program_id=program_id,
+            span_id=span_id,
+            parent_span_id=None,
+            span_kind=span_kind,
+            name=span_kind.lower(),
+            start_ts=0.0,
+            end_ts=duration_ms / 1000.0,
+            duration_ms=duration_ms,
+            error=error,
+        )
+
     def test_total_ms_positive(self, tmp_path):
         bd = compute_breakdown(self._spans(tmp_path))
         assert bd["total_ms"] > 0
@@ -86,6 +108,28 @@ class TestComputeBreakdown:
         bd = compute_breakdown(self._spans(tmp_path))
         write_breakdown_json(bd, tmp_path)
         assert (tmp_path / "breakdown.json").exists()
+
+    def test_program_breakdown_groups_by_program_id(self):
+        spans = [
+            self._span("slow_001", "slow_llm", "LLM", 500.0),
+            self._span("slow_001", "slow_tool", "TOOL", 2000.0),
+            self._span("cpu_001", "cpu_llm", "LLM", 400.0),
+            self._span("cpu_001", "cpu_tool", "TOOL", 800.0),
+        ]
+        bd = compute_breakdown(spans)
+        assert bd["program_count"] == 2
+        assert set(bd["programs"]) == {"slow_001", "cpu_001"}
+        assert bd["programs"]["slow_001"]["tool_ms"] == 2000.0
+        assert bd["programs"]["cpu_001"]["llm_calls"] == 1
+
+    def test_slowest_program_is_reported(self):
+        spans = [
+            self._span("slow_001", "slow_tool", "TOOL", 2000.0),
+            self._span("cpu_001", "cpu_tool", "TOOL", 800.0),
+        ]
+        bd = compute_breakdown(spans)
+        assert bd["slowest_program_id"] == "slow_001"
+        assert bd["slowest_program_ms"] == 2000.0
 
 
 class TestObserverRegistryFromYaml:

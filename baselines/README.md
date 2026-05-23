@@ -19,6 +19,22 @@ baselines/
 | `opentelemetry_adapter` | External tool (baseline a) | Compare trace coverage and attribution quality |
 | `rule_based_profiler` | Ablation (baseline b) | Verify LLM planner adds value over deterministic rules |
 
+## Candidate selection
+
+Baseline comparison is motivation-oriented, not a strict variable-control experiment.
+The goal is to understand coverage, attribution style, reporting strengths/weaknesses,
+and ideas AgentProf can learn from.
+
+Initial candidate pool:
+
+| Candidate | Why consider it | Likely comparison angle |
+| --- | --- | --- |
+| Langfuse | Open-source LLM observability with tracing, metrics, evals, prompt management, and OpenTelemetry integration | Trace coverage, latency/cost visibility, report ergonomics |
+| Arize Phoenix / OpenInference | OpenTelemetry-based AI observability and broad framework instrumentation | OTel/OpenInference span schema vs AgentProf AgentEvent schema |
+| AgentOps | Agent-focused monitoring, replay, cost tracking, and framework integrations | Agent-session view vs methodology-driven profiling report |
+| AgentSight | eBPF/system-level AI agent observability | System boundary visibility vs in-process observer callbacks |
+| AgentProf-named projects | Must be searched and filtered; many hits may mean "agent profile" rather than profiling | Include only if it profiles/observes LLM agent execution |
+
 ## How baselines relate to `agentprof/planner/backends/rule/`
 
 `rule_based_profiler/` here is a **standalone** version that can run without the full AgentProf

@@ -59,20 +59,38 @@ All items below are testable without LLM/GPU. 38 tests passing.
 - [x] `agentprof/report/summary_json.py` — write_summary_json()
 - [x] Run all three controlled tasks end-to-end (slow_001, cpu_001, flaky_001 — smoke test 2026-05-23)
 - [x] Review first report.md for correctness (profiles/run_c9ef5986/report.md reviewed)
-- [ ] `configs/workload_controlled.yaml` — verify multi-program config is complete
-- [ ] System-level aggregation across programs in `agentprof/analysis/breakdown.py`
+- [x] `configs/workload_controlled.yaml` — verify multi-program config is complete
+- [x] System-level aggregation across programs in `agentprof/analysis/breakdown.py`
 
 ## Milestone 5: Real Benchmark Subset
 
-- [ ] Select BFCL V3 multi-turn subset
-- [ ] Implement trace adapter for BFCL tasks
-- [ ] Compare report vs controlled workload
+- [ ] **NO1xes:** select BFCL V3 multi-turn subset for demo-scale evaluation
+- [ ] **NO1xes:** run target agent with vLLM on the selected subset; keep AgentProf planner free to use a separate API endpoint when needed to avoid local vLLM contention
+- [ ] **NO1xes:** implement the minimum BFCL trace adapter needed for AgentProf inputs
+- [ ] **NO1xes:** compare report vs controlled workload and identify what changes from toy tasks to real benchmark traces
+- [ ] **collab:** add fixture-only tests for BFCL adapter parsing and malformed-trace handling
+- [ ] **collab:** document BFCL subset selection criteria and reproduction notes in `experiments/comparisons/`
+
+## Test Roadmap
+
+Tests must evolve with new features. Add tests before or alongside each feature; keep Tier 1 tests GPU-free and API-free.
+
+- [ ] Add report snapshot/structure tests for `report.md` and `summary.json` multi-program sections
+- [ ] Add controller dry-run tests that use fixture events and rule planner without vLLM
+- [ ] Add BFCL adapter fixture tests before running BFCL experiments
+- [ ] Add baseline adapter fixture tests for Langfuse/OpenTelemetry/Phoenix-style traces
+- [ ] Add resource-limit guard tests or script checks for Docker/Tier 3 command templates
+- [ ] Maintain a small golden `profiles/`-like fixture under `tests/fixtures/` for regression tests, without committing large logs
 
 ## Baselines (parallel track, no milestone dependency)
 
-- [ ] `baselines/langfuse_adapter/` — wrap Langfuse output → AgentEvent format (baseline a)
-- [ ] `baselines/opentelemetry_adapter/` — wrap OTel spans → AgentEvent format (baseline a)
-- [ ] `baselines/rule_based_profiler/` — standalone rule-based profiler (ablation baseline b)
+- [ ] **collab:** survey GitHub/open-source agent observability and profiling tools for qualitative baselines; search `agentprof`, `agent profiler`, `LLM agent profiling`, `agent observability`, and `OpenTelemetry agent tracing`; explicitly discard unrelated "agent profile" hits
+- [ ] **collab:** shortlist candidate baselines with fit notes; initial candidates include Langfuse, Arize Phoenix/OpenInference, AgentOps, AgentSight, OpenTelemetry-native stacks, and any relevant AgentProf-named project found during survey
+- [ ] **collab:** `baselines/langfuse_adapter/` — wrap Langfuse/OpenTelemetry-style output → AgentEvent format (baseline a)
+- [ ] **collab:** `baselines/opentelemetry_adapter/` — wrap raw OTel/OpenInference spans → AgentEvent format (baseline a)
+- [ ] **collab:** create `experiments/comparisons/exp003-agentprof-vs-observability-baselines/` for motivation-style comparison, not strict variable-control evaluation
+- [ ] **NO1xes:** `baselines/rule_based_profiler/` — standalone rule-based profiler (ablation baseline b)
+- [ ] **NO1xes:** run demo comparison: AgentProf vs selected baseline(s), focusing on observed strengths, weaknesses, and potential improvements
 
 ## Deferred / Future
 
