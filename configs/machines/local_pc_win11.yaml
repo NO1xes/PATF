@@ -29,7 +29,7 @@ workspace:
 
 git:
   auth_method: ssh
-  remote: "git@github.com:NO1xes/AgentProf.git"
+  remote: "git@github.com:NO1xes/PATF.git"
   config_scope: global  # personal machine, global config is fine
   notes: "SSH key confirmed working as of 2026-05-14."
 

@@ -53,9 +53,9 @@ vLLM 服务（Qwen3-30B-A3B）   slow/cpu/flaky 工具
 
 ```bash
 # 1. 克隆仓库，切换到工作分支
-git clone git@github.com:NO1xes/AgentProf.git      # SSH（个人机）
-# 或: git clone https://<PAT>@github.com/NO1xes/AgentProf.git  # HTTPS+PAT（共享服务器）
-cd AgentProf
+git clone git@github.com:NO1xes/PATF.git      # SSH（个人机）
+# 或: git clone https://<PAT>@github.com/NO1xes/PATF.git  # HTTPS+PAT（共享服务器）
+cd PATF
 git checkout dev
 
 # 2. 创建 conda 环境（Python 3.11）

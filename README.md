@@ -47,9 +47,9 @@ The three components are strictly separate:
 
 ```bash
 # 1. Clone and switch to working branch
-git clone git@github.com:NO1xes/AgentProf.git   # SSH
-# or: git clone https://<PAT>@github.com/NO1xes/AgentProf.git  # HTTPS+PAT (shared servers)
-cd AgentProf
+git clone git@github.com:NO1xes/PATF.git   # SSH
+# or: git clone https://<PAT>@github.com/NO1xes/PATF.git  # HTTPS+PAT (shared servers)
+cd PATF
 git checkout dev
 
 # 2. Create conda environment (Python 3.11)

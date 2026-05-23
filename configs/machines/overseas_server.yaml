@@ -27,7 +27,7 @@ resource_limits:
 
 git:
   auth_method: https_pat   # SSH key typically not available on shared servers
-  remote: "https://github.com/NO1xes/AgentProf.git"
+  remote: "https://github.com/NO1xes/PATF.git"
   config_scope: local      # MUST use --local, never --global on shared servers
 
 network:

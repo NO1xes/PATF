@@ -135,9 +135,9 @@ report/
 
 ```bash
 # 1. 克隆（共享服务器用 HTTPS+PAT，个人机用 SSH）
-git clone https://<PAT>@github.com/NO1xes/AgentProf.git   # HTTPS+PAT（共享服务器）
+git clone https://<PAT>@github.com/NO1xes/PATF.git   # HTTPS+PAT（共享服务器）
 # 或
-git clone git@github.com:NO1xes/AgentProf.git              # SSH（个人机）
+git clone git@github.com:NO1xes/PATF.git              # SSH（个人机）
 
 # 2. 切换到当前工作分支
 git checkout dev
@@ -179,8 +179,8 @@ cat PROJECT_STATUS.md
 
 | 场景 | 方法 |
 | --- | --- |
-| 个人机，SSH key 已配好 | `git clone git@github.com:NO1xes/AgentProf.git` |
-| 共享服务器，无 SSH key | 用 HTTPS + Personal Access Token（PAT）：`git clone https://<PAT>@github.com/NO1xes/AgentProf.git`，PAT 存入 `.env` 的 `GITHUB_PAT` 字段，不进 git |
+| 个人机，SSH key 已配好 | `git clone git@github.com:NO1xes/PATF.git` |
+| 共享服务器，无 SSH key | 用 HTTPS + Personal Access Token（PAT）：`git clone https://<PAT>@github.com/NO1xes/PATF.git`，PAT 存入 `.env` 的 `GITHUB_PAT` 字段，不进 git |
 | 共享服务器，git 身份 | 用 `git config --local`（不用 `--global`，避免污染其他用户） |
 
 ---
