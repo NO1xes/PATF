@@ -46,7 +46,7 @@ Stable: `main` (commit d6223f9 — Milestones 0–3 merged 2026-05-23)
 
 ## Tests
 
-68 tests passing (nusa100, langchain + vLLM available):
+69 tests passing (nusa100, langchain + vLLM available):
 
 - `tests/test_schema.py` — schema construction + JSON roundtrip
 - `tests/test_storage.py` — event read/write
@@ -55,6 +55,7 @@ Stable: `main` (commit d6223f9 — Milestones 0–3 merged 2026-05-23)
 - `tests/test_milestone2.py` — resource_health, questions (18 tests)
 - `tests/test_tools.py` — slow/cpu/flaky tool behavior + workload event tagging (8 tests)
 - `tests/test_report.py` — report.md and summary.json multi-program structure (2 tests)
+- `tests/test_controller.py` — controller dry-run with fixture events and rule planner (1 test)
 
 End-to-end smoke test PASSED (rule planner, 3 workload programs, Qwen3-30B-A3B-Instruct-2507)
 

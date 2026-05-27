@@ -72,7 +72,7 @@ cp .env.example .env
 bash scripts/install_hooks.sh
 
 # 5. 验证环境（无需 GPU）
-pytest tests/ -x -q   # 应有 68 个测试通过
+pytest tests/ -x -q   # 应有 69 个测试通过
 
 # 6. 运行受控工作负载（需要在 .env 中配置 LLM 端点）
 bash scripts/run_controlled_workload.sh
@@ -129,7 +129,7 @@ profiles/                 实验运行输出（大文件，不进 git）
 - [x] Milestone 1：观察器 + 分析模块（38 个测试，无需 LLM/GPU）
 - [x] Milestone 2：resource_health、questions、run_workload、端到端 smoke test
 - [x] Milestone 3：LLM Planner + 完整控制器循环 — smoke test 通过（nusa100，2026-05-23）
-- [x] Milestone 4：多程序聚合 + 报告质量（68 个测试）
+- [x] Milestone 4：多程序聚合 + 报告质量（69 个测试）
 - [ ] Milestone 5：真实基准子集（BFCL V3）
 
 ---
