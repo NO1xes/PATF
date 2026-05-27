@@ -48,7 +48,7 @@ The three components are strictly separate:
 ```bash
 # 1. Clone and switch to working branch
 git clone git@github.com:NO1xes/PATF.git   # SSH
-# or: git clone https://<PAT>@github.com/NO1xes/PATF.git  # HTTPS+PAT (shared servers)
+# or: git clone https://github.com/NO1xes/PATF.git  # HTTPS on shared servers
 cd PATF
 git checkout dev
 
@@ -61,6 +61,7 @@ pip install -e ".[dev]"
 # 3. Copy and fill environment variables
 cp .env.example .env
 # Edit .env: set VLLM_BASE_URL, VLLM_MODEL, AGENTPROF_MACHINE, etc.
+# On shared servers, also set GITHUB_USER/GITHUB_PAT and use scripts/git_push_with_env_pat.sh.
 
 # 4. Install pre-commit hook (one-time, optional but recommended)
 bash scripts/install_hooks.sh

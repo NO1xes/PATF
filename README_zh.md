@@ -54,7 +54,7 @@ vLLM 服务（Qwen3-30B-A3B）   slow/cpu/flaky 工具
 ```bash
 # 1. 克隆仓库，切换到工作分支
 git clone git@github.com:NO1xes/PATF.git      # SSH（个人机）
-# 或: git clone https://<PAT>@github.com/NO1xes/PATF.git  # HTTPS+PAT（共享服务器）
+# 或: git clone https://github.com/NO1xes/PATF.git  # 共享服务器 HTTPS
 cd PATF
 git checkout dev
 
@@ -67,6 +67,7 @@ pip install -e ".[dev]"
 # 3. 配置环境变量
 cp .env.example .env
 # 编辑 .env：填写 VLLM_BASE_URL、VLLM_MODEL、AGENTPROF_MACHINE 等
+# 共享服务器还需填写 GITHUB_USER/GITHUB_PAT，并用 scripts/git_push_with_env_pat.sh 推送
 
 # 4. 安装 pre-commit hook（一次性，推荐）
 bash scripts/install_hooks.sh

@@ -6,6 +6,12 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
+## 2026-05-27 | chore | Safe GitHub PAT push workflow
+
+- Added `scripts/git_push_with_env_pat.sh` to push over HTTPS using `GITHUB_USER`/`GITHUB_PAT` from `.env` without embedding PATs in remote URLs
+- Updated shared-server setup, onboarding, README, and security docs to forbid PAT-in-URL clone/push flows
+- Updated `.env.example`, `AGENTS.md`, and `scripts/README.md` with the safe PAT workflow
+
 ## 2026-05-27 | feat | BFCL demo workload adapter
 
 - Added `agentprof/adapters/bfcl.py` to convert BFCL JSON/JSONL question files into AgentProf workload YAML
