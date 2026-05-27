@@ -6,6 +6,14 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
+## 2026-05-27 | feat | BFCL demo workload adapter
+
+- Added `agentprof/adapters/bfcl.py` to convert BFCL JSON/JSONL question files into AgentProf workload YAML
+- Added draft `configs/bfcl_demo_subset.yaml` for Milestone 5 demo subset selection and adapter command
+- Added local BFCL fixture and adapter tests; no BFCL execution, vLLM, Docker, GPU, or external API calls
+- Updated module/config documentation and Milestone 5 TODO status
+- Verified: 70/70 tests pass with `/disk2/runyuan/envs/agentprof/bin/python -m pytest tests/ -x -q`
+
 ## 2026-05-23 | feat | Milestone 4 — multi-program breakdown aggregation
 
 - `agentprof/analysis/breakdown.py`: added system-level multi-program aggregation while preserving existing top-level llm/tool/wait/unknown fields

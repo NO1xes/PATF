@@ -66,7 +66,7 @@ All items below are testable without LLM/GPU. 38 tests passing.
 
 - [ ] **NO1xes:** select BFCL V3 multi-turn subset for demo-scale evaluation
 - [ ] **NO1xes:** run target agent with vLLM on the selected subset; keep AgentProf planner free to use a separate API endpoint when needed to avoid local vLLM contention
-- [ ] **NO1xes:** implement the minimum BFCL trace adapter needed for AgentProf inputs
+- [x] **NO1xes:** implement the minimum BFCL trace adapter needed for AgentProf inputs
 - [ ] **NO1xes:** compare report vs controlled workload and identify what changes from toy tasks to real benchmark traces
 - [ ] **collab:** add fixture-only tests for BFCL adapter parsing and malformed-trace handling
 - [ ] **collab:** document BFCL subset selection criteria and reproduction notes in `experiments/comparisons/`

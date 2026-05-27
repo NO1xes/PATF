@@ -2,7 +2,7 @@
 
 A methodology-driven profiling controller for agent systems under workload.
 
-Current architecture: v0.4 — LLM planner + deterministic tools + validator
+Current architecture: v0.1 — LLM planner + deterministic tools + validator
 Active branch: `dev` (working branch for both contributors)
 
 ## What This Is
@@ -66,7 +66,7 @@ cp .env.example .env
 bash scripts/install_hooks.sh
 
 # 5. Verify setup (no GPU needed)
-pytest tests/ -x -q   # 66 tests should pass
+pytest tests/ -x -q   # 70 tests should pass
 
 # 6. Run controlled workload (requires LLM endpoint in .env)
 bash scripts/run_controlled_workload.sh
@@ -106,6 +106,7 @@ agentprof/                Core profiling controller (Python package)
     __init__.py           Factory: get_planner()
   analysis/               Deterministic computation: timeline, breakdown, resource_health, questions
   tools/                  Deterministic tools callable by controller
+  adapters/               External benchmark adapters (BFCL workload conversion)
   executor.py             Execute approved ObservationPlan
   report/                 Write report.md and summary.json
   controller.py           Orchestrate the full profiling loop
@@ -142,8 +143,8 @@ docker/                   Containerization (future)
 - [x] Milestone 1: Observers + analysis implemented (38 tests, no LLM/GPU required)
 - [x] Milestone 2: resource_health, questions, run_workload, end-to-end smoke test
 - [x] Milestone 3: LLM Planner + full controller loop — smoke test PASSED (nusa100, 2026-05-23)
-- [x] Milestone 4: Multi-program aggregation + report quality (66 tests)
-- [ ] Milestone 5: Real benchmark subset (BFCL V3)
+- [x] Milestone 4: Multi-program aggregation + report quality (70 tests)
+- [ ] Milestone 5: Real benchmark subset (BFCL V3; adapter implemented, demo run pending)
 
 ## Collaboration
 

@@ -24,6 +24,7 @@ agentprof/
       rule/       Rule-based planner — ablation baseline b (Milestone 2, implemented)
   analysis/       Deterministic computation: timeline, breakdown, resource_health, questions
   tools/          Deterministic tools callable by controller
+  adapters/       External benchmark/observability adapters (BFCL workload adapter implemented)
   executor.py     Execute approved ObservationPlan (Milestone 3, implemented)
   report/         Write report.md and summary.json (Milestone 4, implemented)
   controller.py   Orchestrate the full profiling loop (Milestone 3, implemented)
@@ -52,6 +53,6 @@ See `PROJECT_STATUS.md` for the full table. Summary (as of 2026-05-23):
 - Milestone 0–4: all planned modules **implemented** — schema, model, validator, storage, state,
   observers (langchain), analysis (timeline, breakdown, resource_health, questions),
   rule_planner, llm_planner, executor, controller, report
-- 66 tests passing; end-to-end smoke test PASSED (rule + LLM planner, nusa100)
+- 70 tests passing; end-to-end smoke test PASSED (rule + LLM planner, nusa100)
 - Milestone 4: multi-program aggregation and report quality implemented
-- Milestone 5+: BFCL adapter — **not yet started**
+- Milestone 5: BFCL workload adapter implemented; demo subset/run still pending
