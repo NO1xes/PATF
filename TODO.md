@@ -75,7 +75,7 @@ All items below are testable without LLM/GPU. 38 tests passing.
 
 Tests must evolve with new features. Add tests before or alongside each feature; keep Tier 1 tests GPU-free and API-free.
 
-- [ ] Add report snapshot/structure tests for `report.md` and `summary.json` multi-program sections
+- [x] Add report snapshot/structure tests for `report.md` and `summary.json` multi-program sections
 - [ ] Add controller dry-run tests that use fixture events and rule planner without vLLM
 - [ ] Add BFCL adapter fixture tests before running BFCL experiments
 - [ ] Add baseline adapter fixture tests for Langfuse/OpenTelemetry/Phoenix-style traces

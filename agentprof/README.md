@@ -52,6 +52,6 @@ See `PROJECT_STATUS.md` for the full table. Summary (as of 2026-05-23):
 - Milestone 0–4: all planned modules **implemented** — schema, model, validator, storage, state,
   observers (langchain), analysis (timeline, breakdown, resource_health, questions),
   rule_planner, llm_planner, executor, controller, report
-- 66 tests passing; end-to-end smoke test PASSED (rule + LLM planner, nusa100)
+- 68 tests passing; end-to-end smoke test PASSED (rule + LLM planner, nusa100)
 - Milestone 4: multi-program aggregation and report quality implemented
 - Milestone 5+: BFCL adapter — **not yet started**

@@ -6,6 +6,13 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
+## 2026-05-27 | test | Report structure regression tests
+
+- Added `tests/test_report.py` for `report.md` and `summary.json` multi-program output structure
+- Marked the report snapshot/structure test roadmap item complete in `TODO.md`
+- Updated documented unit test count to 68
+- Verified: 68/68 tests pass with `/disk2/runyuan/envs/agentprof/bin/python -m pytest tests/ -x -q`
+
 ## 2026-05-23 | feat | Milestone 4 — multi-program breakdown aggregation
 
 - `agentprof/analysis/breakdown.py`: added system-level multi-program aggregation while preserving existing top-level llm/tool/wait/unknown fields

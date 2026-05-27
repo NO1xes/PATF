@@ -249,7 +249,7 @@ These can be committed directly with a `docs:` commit message, no prior discussi
 
 Before opening a PR from `feat/` to `dev`:
 
-- [ ] `pytest tests/ -x -q` passes locally (66 tests, no GPU needed)
+- [ ] `pytest tests/ -x -q` passes locally (68 tests, no GPU needed)
 - [ ] GitHub Actions CI is green on the PR page
 - [ ] No imports from frozen modules have changed signatures
 - [ ] If a frozen module was changed: ADR written and both contributors agreed
