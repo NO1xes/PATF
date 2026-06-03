@@ -40,6 +40,9 @@ FORBIDDEN_ACTIONS = {
 - Do NOT let Python rules alone decide the next observer — LLM planner must generate the plan
 - Do NOT delete files under `profiles/`
 - Do NOT commit `.env`, API keys, model weights, large logs
+- Do NOT put PATs or other secrets in git remote URLs, shell history, docs, commits, or chat.
+- On shared machines where SSH is unavailable, use `scripts/git_push_with_env_pat.sh`;
+  it reads `GITHUB_USER`/`GITHUB_PAT` from `.env` without printing them.
 
 ## Required
 
@@ -171,4 +174,3 @@ docker run --rm \
 
 See `docs/design/onboarding.md` for full setup steps.
 Quick start prompt for a new CC session is at the bottom of that file.
-

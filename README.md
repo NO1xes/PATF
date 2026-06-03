@@ -2,7 +2,7 @@
 
 A methodology-driven profiling controller for agent systems under workload.
 
-Current architecture: v0.4 — LLM planner + deterministic tools + validator
+Current architecture: v0.1 — LLM planner + deterministic tools + validator
 Active branch: `dev` (working branch for both contributors)
 
 ## What This Is
@@ -48,7 +48,7 @@ The three components are strictly separate:
 ```bash
 # 1. Clone and switch to working branch
 git clone git@github.com:NO1xes/PATF.git   # SSH
-# or: git clone https://<PAT>@github.com/NO1xes/PATF.git  # HTTPS+PAT (shared servers)
+# or: git clone https://github.com/NO1xes/PATF.git  # HTTPS on shared servers
 cd PATF
 git checkout dev
 
@@ -61,12 +61,13 @@ pip install -e ".[dev]"
 # 3. Copy and fill environment variables
 cp .env.example .env
 # Edit .env: set VLLM_BASE_URL, VLLM_MODEL, AGENTPROF_MACHINE, etc.
+# On shared servers, also set GITHUB_USER/GITHUB_PAT and use scripts/git_push_with_env_pat.sh.
 
 # 4. Install pre-commit hook (one-time, optional but recommended)
 bash scripts/install_hooks.sh
 
 # 5. Verify setup (no GPU needed)
-pytest tests/ -x -q   # 66 tests should pass
+pytest tests/ -x -q   # 70 tests should pass
 
 # 6. Run controlled workload (requires LLM endpoint in .env)
 bash scripts/run_controlled_workload.sh
@@ -106,6 +107,7 @@ agentprof/                Core profiling controller (Python package)
     __init__.py           Factory: get_planner()
   analysis/               Deterministic computation: timeline, breakdown, resource_health, questions
   tools/                  Deterministic tools callable by controller
+  adapters/               External benchmark adapters (BFCL workload conversion)
   executor.py             Execute approved ObservationPlan
   report/                 Write report.md and summary.json
   controller.py           Orchestrate the full profiling loop
@@ -142,8 +144,8 @@ docker/                   Containerization (future)
 - [x] Milestone 1: Observers + analysis implemented (38 tests, no LLM/GPU required)
 - [x] Milestone 2: resource_health, questions, run_workload, end-to-end smoke test
 - [x] Milestone 3: LLM Planner + full controller loop — smoke test PASSED (nusa100, 2026-05-23)
-- [x] Milestone 4: Multi-program aggregation + report quality (66 tests)
-- [ ] Milestone 5: Real benchmark subset (BFCL V3)
+- [x] Milestone 4: Multi-program aggregation + report quality (70 tests)
+- [ ] Milestone 5: Real benchmark subset (BFCL V3; adapter implemented, demo run pending)
 
 ## Collaboration
 

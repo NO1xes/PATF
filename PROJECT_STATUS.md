@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: 2026-05-23
+Last updated: 2026-05-27
 
 ## Current Architecture Version
 
@@ -38,6 +38,7 @@ Stable: `main` (commit d6223f9 — Milestones 0–3 merged 2026-05-23)
 | `agentprof/report/markdown_report.py` | implemented | 10-section report.md |
 | `agentprof/report/summary_json.py` | implemented | summary.json |
 | `agentprof/tools/run_workload_tool.py` | implemented | wires agent + observers + storage |
+| `agentprof/adapters/bfcl.py` | implemented | BFCL JSON/JSONL questions → AgentProf workload YAML |
 | `targets/langchain_react_agent/tools.py` | implemented | slow/cpu/flaky tools |
 | `targets/langchain_react_agent/agent.py` | implemented | run_task() done; needs vLLM for live test |
 | `baselines/langfuse_adapter/` | stub | comparison baseline a |
@@ -46,7 +47,7 @@ Stable: `main` (commit d6223f9 — Milestones 0–3 merged 2026-05-23)
 
 ## Tests
 
-66 tests passing (nusa100, langchain + vLLM available):
+70 tests passing (nusa100, langchain + vLLM available):
 
 - `tests/test_schema.py` — schema construction + JSON roundtrip
 - `tests/test_storage.py` — event read/write
@@ -54,6 +55,7 @@ Stable: `main` (commit d6223f9 — Milestones 0–3 merged 2026-05-23)
 - `tests/test_analysis.py` — timeline, breakdown, multi-program aggregation, registry from_yaml
 - `tests/test_milestone2.py` — resource_health, questions (18 tests)
 - `tests/test_tools.py` — slow/cpu/flaky tool behavior + workload event tagging (8 tests)
+- `tests/test_bfcl_adapter.py` — BFCL workload adapter conversion (4 tests)
 
 End-to-end smoke test PASSED (rule planner, 3 workload programs, Qwen3-30B-A3B-Instruct-2507)
 
@@ -74,16 +76,17 @@ pytest tests/ -x -q
 - [x] Smoke test PASSED on nusa100 (rule planner + Qwen3-30B-A3B-Instruct-2507, 2026-05-23)
 - [x] LLM planner smoke test PASSED on nusa100 (Qwen3-30B-A3B-Instruct-2507 → valid ObservationPlan JSON, 2026-05-23)
 - [x] Milestone 4: controlled multi-program config verified; per-program/system breakdown aggregation implemented; report and summary expose per-program results
+- [x] Milestone 5 partial: BFCL adapter implemented for offline workload YAML generation
 
 ## In Progress
 
-_(none — ready to start Milestone 5)_
+- Milestone 5: BFCL demo subset selection and controlled demo run preparation
 
 ## Next: Milestone 5
 
-1. Select BFCL V3 multi-turn subset
-2. Implement trace adapter for BFCL tasks
-3. Compare report vs controlled workload
+1. Select concrete BFCL V3 multi-turn run IDs for demo
+2. Generate `configs/workload_bfcl_generated.yaml` from upstream BFCL questions
+3. Run target agent with vLLM under resource limits and compare report vs controlled workload
 
 ## Blocked
 

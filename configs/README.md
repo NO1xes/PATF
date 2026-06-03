@@ -11,6 +11,7 @@ All configuration files for AgentProf. No hardcoded paths or values in code — 
 | `observers.yaml` | Observer capability registry: name, layer, capabilities, mode |
 | `backends.yaml` | Backend selection: `observer_backend`, `planner_backend` |
 | `workload_controlled.yaml` | Controlled workload definition: tasks, repetitions, arrival rate |
+| `bfcl_demo_subset.yaml` | Milestone 5 BFCL V3 demo subset plan and adapter command |
 | `machines/<id>.yaml` | Per-machine environment: OS, GPU, conda path, network, git auth |
 
 ## Backend switching

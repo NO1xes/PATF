@@ -2,7 +2,7 @@
 
 基于方法论的 LLM Agent 系统性能剖析框架。
 
-当前架构：v0.4 — LLM planner + 确定性工具 + 验证器  
+当前架构：v0.1 — LLM planner + 确定性工具 + 验证器
 工作分支：`dev`（两位贡献者的日常分支）
 
 > 英文版：[README.md](README.md)
@@ -54,7 +54,7 @@ vLLM 服务（Qwen3-30B-A3B）   slow/cpu/flaky 工具
 ```bash
 # 1. 克隆仓库，切换到工作分支
 git clone git@github.com:NO1xes/PATF.git      # SSH（个人机）
-# 或: git clone https://<PAT>@github.com/NO1xes/PATF.git  # HTTPS+PAT（共享服务器）
+# 或: git clone https://github.com/NO1xes/PATF.git  # 共享服务器 HTTPS
 cd PATF
 git checkout dev
 
@@ -67,12 +67,13 @@ pip install -e ".[dev]"
 # 3. 配置环境变量
 cp .env.example .env
 # 编辑 .env：填写 VLLM_BASE_URL、VLLM_MODEL、AGENTPROF_MACHINE 等
+# 共享服务器还需填写 GITHUB_USER/GITHUB_PAT，并用 scripts/git_push_with_env_pat.sh 推送
 
 # 4. 安装 pre-commit hook（一次性，推荐）
 bash scripts/install_hooks.sh
 
 # 5. 验证环境（无需 GPU）
-pytest tests/ -x -q   # 应有 66 个测试通过
+pytest tests/ -x -q   # 应有 70 个测试通过
 
 # 6. 运行受控工作负载（需要在 .env 中配置 LLM 端点）
 bash scripts/run_controlled_workload.sh
@@ -129,8 +130,8 @@ profiles/                 实验运行输出（大文件，不进 git）
 - [x] Milestone 1：观察器 + 分析模块（38 个测试，无需 LLM/GPU）
 - [x] Milestone 2：resource_health、questions、run_workload、端到端 smoke test
 - [x] Milestone 3：LLM Planner + 完整控制器循环 — smoke test 通过（nusa100，2026-05-23）
-- [x] Milestone 4：多程序聚合 + 报告质量（66 个测试）
-- [ ] Milestone 5：真实基准子集（BFCL V3）
+- [x] Milestone 4：多程序聚合 + 报告质量（70 个测试）
+- [ ] Milestone 5：真实基准子集（BFCL V3；adapter 已实现，demo run 待完成）
 
 ---
 

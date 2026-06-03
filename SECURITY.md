@@ -18,6 +18,8 @@
 When working on a shared machine:
 
 - Use `git config --local` (not `--global`) to set user.name and user.email per-repo.
+- Keep GitHub remotes as plain HTTPS or SSH URLs; never embed PATs in remote URLs.
+- For HTTPS git push, store `GITHUB_USER` and `GITHUB_PAT` in `.env` and use `scripts/git_push_with_env_pat.sh`.
 - Do not use default port 8000 for vLLM if others share the machine — set a custom port in `configs/machines/<name>.yaml`.
 - Do not install system packages without permission.
 - Use conda env or Docker to isolate the environment.
@@ -30,6 +32,7 @@ When working on a shared machine:
 | Key | Where stored | Used for |
 |---|---|---|
 | `OPENAI_API_KEY` or `VLLM_API_KEY` | `.env` | LLM backend calls |
+| `GITHUB_USER`, `GITHUB_PAT` | `.env` | HTTPS git push/pull on shared servers |
 | GitHub SSH key | `~/.ssh/` | git push/pull |
 
 ## Coding Agent Permissions
@@ -42,5 +45,8 @@ Coding agents should only be able to:
 Coding agents must NOT:
 - Run `rm -rf` outside the project workspace
 - Modify system config or install system packages
-- Access or print the contents of `.env`
+- Print, summarize, commit, or persist the contents of `.env`
+- Put secrets in command arguments, git remote URLs, shell history, docs, commits, or chat
 - Push to `main` directly — always use a branch
+
+Coding agents MAY load `.env` inside a local command when needed for an approved action, such as running a script that passes credentials to git without printing them.
