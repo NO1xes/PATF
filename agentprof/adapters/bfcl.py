@@ -25,19 +25,27 @@ def load_bfcl_cases(path: str | Path) -> list[dict[str, Any]]:
 
     Supports common wrappers such as {"questions": [...]}, {"data": [...]}, and
     {"items": [...]}. Raises ValueError for unsupported payload shapes.
+
+    BFCL v3 question files such as ``BFCL_v3_simple.json`` use a .json extension
+    but are newline-delimited JSON objects (one JSON object per line).  This
+    function first tries parsing the whole file as a single JSON document; on
+    failure it falls back to line-by-line JSONL parsing so that those upstream
+    benchmark files work without renaming or reformatting.
     """
     path = Path(path)
-    if path.suffix == ".jsonl":
-        cases = []
-        with path.open(encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if line:
-                    cases.append(json.loads(line))
-        return cases
+    raw = path.read_text(encoding="utf-8")
 
-    with path.open(encoding="utf-8") as f:
-        payload = json.load(f)
+    # Try standard JSON first (single array or object).
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError:
+        # Fall back to line-by-line JSONL parsing.
+        cases = []
+        for line in raw.splitlines():
+            line = line.strip()
+            if line:
+                cases.append(json.loads(line))
+        return cases
 
     if isinstance(payload, list):
         return payload
