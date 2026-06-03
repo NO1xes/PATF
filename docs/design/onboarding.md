@@ -134,8 +134,8 @@ report/
 ### 4.1 通用步骤（所有机器）
 
 ```bash
-# 1. 克隆（共享服务器用 HTTPS+PAT，个人机用 SSH）
-git clone https://<PAT>@github.com/NO1xes/PATF.git   # HTTPS+PAT（共享服务器）
+# 1. 克隆（共享服务器用普通 HTTPS，个人机用 SSH）
+git clone https://github.com/NO1xes/PATF.git          # HTTPS（共享服务器）
 # 或
 git clone git@github.com:NO1xes/PATF.git              # SSH（个人机）
 
@@ -159,7 +159,8 @@ cp .env.example .env
 #   VLLM_BASE_URL=http://<your-server>:8000/v1
 #   VLLM_API_KEY=dummy   （本地 vLLM 不需要真实 key）
 #   AGENTPROF_MACHINE=<machine_id>
-#   GITHUB_PAT=<your-token>   （共享服务器需要，用于 git push/pull）
+#   GITHUB_USER=<your-github-handle>  （共享服务器 HTTPS push 需要）
+#   GITHUB_PAT=<your-token>           （共享服务器 HTTPS push 需要）
 
 # 7. 验证环境
 bash scripts/verify_env.sh
@@ -180,7 +181,7 @@ cat PROJECT_STATUS.md
 | 场景 | 方法 |
 | --- | --- |
 | 个人机，SSH key 已配好 | `git clone git@github.com:NO1xes/PATF.git` |
-| 共享服务器，无 SSH key | 用 HTTPS + Personal Access Token（PAT）：`git clone https://<PAT>@github.com/NO1xes/PATF.git`，PAT 存入 `.env` 的 `GITHUB_PAT` 字段，不进 git |
+| 共享服务器，无 SSH key | 用普通 HTTPS clone：`git clone https://github.com/NO1xes/PATF.git`；`GITHUB_USER`/`GITHUB_PAT` 存入 `.env`，推送用 `bash scripts/git_push_with_env_pat.sh -u origin feat/<branch>` |
 | 共享服务器，git 身份 | 用 `git config --local`（不用 `--global`，避免污染其他用户） |
 
 ---

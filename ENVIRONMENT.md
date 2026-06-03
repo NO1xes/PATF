@@ -26,13 +26,29 @@ git clone git@github.com:NO1xes/PATF.git
 **HTTPS + Personal Access Token (PAT) — for shared servers where SSH is not set up:**
 
 ```bash
-# Replace <PAT> with your GitHub Personal Access Token
-git clone https://<PAT>@github.com/NO1xes/PATF.git
+git clone https://github.com/NO1xes/PATF.git
 ```
 
 How to get a PAT: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → New token. Grant `Contents: Read and Write` on the AgentProf repo.
 
-Store the PAT in `.env` as `GITHUB_PAT=<token>` — never hardcode it in scripts or commit it.
+Store GitHub credentials in `.env`:
+
+```bash
+GITHUB_USER=<your-github-handle>
+GITHUB_PAT=<token>
+```
+
+Never place the PAT in the clone URL, push URL, git remote, shell history, docs, commits, or chat. Keep the remote as plain HTTPS:
+
+```bash
+git remote set-url origin https://github.com/NO1xes/PATF.git
+```
+
+For HTTPS pushes on shared machines, use the repo helper. It reads `.env`, feeds username/PAT to git through a temporary askpass script, and removes the temporary file after the command:
+
+```bash
+bash scripts/git_push_with_env_pat.sh -u origin feat/<your-branch-name>
+```
 
 On a shared server, set git identity locally (not globally, to avoid polluting other users):
 
@@ -65,7 +81,7 @@ Key fields (see `.env.example` for full list):
 - `VLLM_PYTHON`, `HF_HOME` — GPU server only; paths to vllm env and HF cache
 - `AGENTPROF_MACHINE` — machine_id (e.g. `nusa100`, `local_pc_win11`)
 - `AGENTPROF_WORK_DIR` — your local workspace root
-- `GITHUB_PAT` — for git push on shared servers (never commit)
+- `GITHUB_USER`, `GITHUB_PAT` — for HTTPS git push on shared servers (never commit)
 
 ### 4. Verify setup
 
@@ -86,8 +102,8 @@ This is a shared machine. Follow all resource constraints in `AGENTS.md` before 
 **Onboarding steps:**
 
 ```bash
-# 1. Clone with HTTPS+PAT (no SSH key on shared server)
-git clone https://<PAT>@github.com/NO1xes/PATF.git
+# 1. Clone with plain HTTPS (no SSH key on shared server)
+git clone https://github.com/NO1xes/PATF.git
 cd PATF
 git checkout dev
 
@@ -113,9 +129,13 @@ cp .env.example .env
 #   VLLM_BASE_URL=http://localhost:<port>/v1
 #   AGENTPROF_MACHINE=nusa100
 #   AGENTPROF_WORK_DIR=/your/workspace/PATF
+#   GITHUB_USER=<your-github-handle>
 #   GITHUB_PAT=<your-token>
 
-# 7. Verify (no GPU needed)
+# 7. Push with PAT safely when needed
+bash scripts/git_push_with_env_pat.sh -u origin feat/<your-branch-name>
+
+# 8. Verify (no GPU needed)
 pytest tests/ -x -q
 ```
 

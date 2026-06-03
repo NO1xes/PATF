@@ -6,14 +6,30 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
+## 2026-05-31 | fix | BFCL adapter handles .json files that are newline-delimited JSON
+
+- `agentprof/adapters/bfcl.py`: `load_bfcl_cases()` now tries `json.loads()` first, falls back to line-by-line JSONL parsing on `JSONDecodeError`
+- BFCL v3 `.json` question files work without renaming
+
 ## 2026-05-27 | test | Report structure regression tests
 
 - Added `tests/test_report.py` for `report.md` and `summary.json` multi-program output structure
 - Added `tests/test_controller.py` for controller dry-run with fixture events and rule planner
 - Marked the report snapshot/structure test roadmap item complete in `TODO.md`
 - Marked the controller dry-run test roadmap item complete in `TODO.md`
-- Updated documented unit test count to 69
-- Verified: 69/69 tests pass with `/disk2/runyuan/envs/agentprof/bin/python -m pytest tests/ -x -q`
+
+## 2026-05-27 | chore | Safe GitHub PAT push workflow
+
+- Added `scripts/git_push_with_env_pat.sh` to push over HTTPS using `GITHUB_USER`/`GITHUB_PAT` from `.env` without embedding PATs in remote URLs
+- Updated shared-server setup, onboarding, README, and security docs to forbid PAT-in-URL clone/push flows
+- Updated `.env.example`, `AGENTS.md`, and `scripts/README.md` with the safe PAT workflow
+
+## 2026-05-27 | feat | BFCL demo workload adapter
+
+- Added `agentprof/adapters/bfcl.py` to convert BFCL JSON/JSONL question files into AgentProf workload YAML
+- Added draft `configs/bfcl_demo_subset.yaml` for Milestone 5 demo subset selection and adapter command
+- Added local BFCL fixture and adapter tests; no BFCL execution, vLLM, Docker, GPU, or external API calls
+- Updated module/config documentation and Milestone 5 TODO status
 
 ## 2026-05-23 | feat | Milestone 4 — multi-program breakdown aggregation
 

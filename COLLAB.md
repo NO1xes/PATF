@@ -347,7 +347,7 @@ bash scripts/install_hooks.sh
 
 ### GitHub Actions（自动，无需操作）
 
-每次向 `dev` 或 `main` push，或者开 PR 时，GitHub 会自动跑全部 69 个 unit test。可在 PR 页面看到结果。两人都不能 merge 一个 CI 红了的 PR（除非 Branch Protection 未开启）。
+每次向 `dev` 或 `main` push，或者开 PR 时，GitHub 会自动跑全部 70 个 unit test。可在 PR 页面看到结果。两人都不能 merge 一个 CI 红了的 PR（除非 Branch Protection 未开启）。
 
 ### 测试分层
 
