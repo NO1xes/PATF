@@ -1,0 +1,11 @@
+# AgentProf ReAct profiling session config (Phase 1 minimal).
+# Used by controller_v2.py.
+
+workload_description: >
+  A controlled test: one or more LangChain ReAct agents running
+  slow_tool (I/O wait), cpu_tool (CPU-bound), and flaky_tool
+  (error+retry) against a shared vLLM model server on this host.
+  The agents are already running — AgentProf observes from outside.
+
+agent_count: 1
+sandbox: none
