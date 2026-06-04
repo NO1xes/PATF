@@ -17,7 +17,11 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from dotenv import load_dotenv
 from openai import OpenAI
+
+# Load .env so AGENTPROF_LLM_URL / AGENTPROF_API_KEY / AGENTPROF_MODEL are available.
+load_dotenv()
 
 from agentprof.planner.backends.llm.prompts_v2 import (
     PROFILING_AGENT_SYSTEM_PROMPT,
@@ -120,7 +124,7 @@ def run_profiling_session(
 
     # -- setup output directory ----------------------------------------------
     run_id = f"run_{uuid.uuid4().hex[:8]}"
-    output_dir = ensure_run_dir(profiles_base, run_id)
+    output_dir = ensure_run_dir(Path(profiles_base), run_id)
 
     # -- build context -------------------------------------------------------
     tool_descriptions = describe_available_tools()
@@ -153,7 +157,7 @@ def run_profiling_session(
                 messages=messages,
                 tools=tools,
                 temperature=0.0,
-                timeout=60,
+                timeout=180,
             )
         except Exception as exc:
             error = f"LLM call failed at iteration {iteration}: {exc}"
@@ -190,10 +194,12 @@ def run_profiling_session(
                     ),
                 })
 
-                # Append assistant message + tool result to conversation
-                messages.append({
+                # Append assistant message + tool result to conversation.
+                # DeepSeek thinking models (v4-pro) emit reasoning_content that
+                # must be passed back to the API on subsequent requests.
+                assistant_msg: dict[str, Any] = {
                     "role": "assistant",
-                    "content": message.content,
+                    "content": message.content or "",
                     "tool_calls": [
                         {
                             "id": tc.id,
@@ -204,7 +210,12 @@ def run_profiling_session(
                             },
                         }
                     ],
-                })
+                }
+                # Preserve reasoning_content if the model returned it.
+                if hasattr(message, "reasoning_content") and message.reasoning_content:
+                    assistant_msg["reasoning_content"] = message.reasoning_content
+
+                messages.append(assistant_msg)
                 messages.append({
                     "role": "tool",
                     "tool_call_id": tc.id,
@@ -228,7 +239,7 @@ def run_profiling_session(
         })
         try:
             response = client.chat.completions.create(
-                model=model, messages=messages, temperature=0.0, timeout=60,
+                model=model, messages=messages, temperature=0.0, timeout=180,
             )
             final_report = response.choices[0].message.content or ""
         except Exception as exc:
