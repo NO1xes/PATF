@@ -67,7 +67,7 @@ cp .env.example .env
 bash scripts/install_hooks.sh
 
 # 5. Verify setup (no GPU needed)
-pytest tests/ -x -q   # 73 tests should pass
+pytest tests/ -x -q   # 90 tests should pass
 
 # 6. Run controlled workload (requires LLM endpoint in .env)
 bash scripts/run_controlled_workload.sh
@@ -144,7 +144,8 @@ docker/                   Containerization (future)
 - [x] Milestone 1: Observers + analysis implemented (38 tests, no LLM/GPU required)
 - [x] Milestone 2: resource_health, questions, run_workload, end-to-end smoke test
 - [x] Milestone 3: LLM Planner + full controller loop — smoke test PASSED (nusa100, 2026-05-23)
-- [x] Milestone 4: Multi-program aggregation + report quality (73 tests)
+- [x] Milestone 4: Multi-program aggregation + report quality
+- [x] Milestone 6: v2 ReAct tool-calling loop (11 tools across 4 tiers, 90 tests)
 - [ ] Milestone 5: Real benchmark subset (BFCL V3; adapter implemented, demo run pending)
 
 ## Collaboration

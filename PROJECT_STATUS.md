@@ -1,15 +1,16 @@
 # Project Status
 
-Last updated: 2026-05-27
+Last updated: 2026-06-04
 
 ## Current Architecture Version
 
-**v0.4-design** — refactored per `05_cc_revision_and_architecture_guide.md`
+**v2-design** — ReAct tool-calling loop with four-tier profiling tools (see `docs/design/agentprof_design.md`)
 
 ## Branch
 
-Active development: `dev`
-Stable: `main` (commit d6223f9 — Milestones 0–3 merged 2026-05-23)
+Active development: `feat/NO1xes-agent-loop-redesign` (v2 ReAct loop)
+Integration: `dev`
+Stable: `main`
 
 ## Module Status
 
@@ -21,79 +22,60 @@ Stable: `main` (commit d6223f9 — Milestones 0–3 merged 2026-05-23)
 | `agentprof/validator.py` | implemented | FROZEN — forbidden actions + budget |
 | `agentprof/storage.py` | implemented | FROZEN — write/read events.jsonl |
 | `agentprof/observers/base.py` | implemented | FROZEN — BaseObserver ABC |
-| `agentprof/observers/backends/langchain/resource_snapshot.py` | implemented | psutil background thread |
-| `agentprof/observers/backends/langchain/tool_events.py` | implemented | `wrap_tool()` done |
-| `agentprof/observers/backends/langchain/llm_client_timing.py` | implemented | monkey-patches OpenAI client |
-| `agentprof/observers/backends/langchain/semantic_langchain.py` | implemented | needs langchain_core at runtime |
+| `agentprof/observers/backends/langchain/` | implemented | 4 baseline observers |
 | `agentprof/planner/base.py` | implemented | FROZEN — BasePlanner ABC |
-| `agentprof/planner/backends/llm/llm_planner.py` | implemented | LLM call → JSON parse → ObservationPlan |
-| `agentprof/planner/backends/llm/context_builder.py` | implemented | formats state → planner prompt |
-| `agentprof/planner/backends/rule/rule_planner.py` | implemented | deterministic rule planner (ablation) |
-| `agentprof/analysis/timeline.py` | implemented | start/end pairing → SpanRecord |
-| `agentprof/analysis/breakdown.py` | implemented | llm/tool/wait split + multi-program aggregation |
-| `agentprof/analysis/resource_health.py` | implemented | USE method on resource_snapshot.csv |
-| `agentprof/analysis/questions.py` | implemented | generates diagnostic questions from breakdown + health |
-| `agentprof/executor.py` | implemented | executes approved plan → EvidenceRecord |
-| `agentprof/controller.py` | implemented | full run_profiling() loop |
-| `agentprof/report/markdown_report.py` | implemented | 10-section report.md |
-| `agentprof/report/summary_json.py` | implemented | summary.json |
-| `agentprof/tools/run_workload_tool.py` | implemented | wires agent + observers + storage |
-| `agentprof/adapters/bfcl.py` | implemented | BFCL JSON/JSONL questions → AgentProf workload YAML |
-| `targets/langchain_react_agent/tools.py` | implemented | slow/cpu/flaky tools |
-| `targets/langchain_react_agent/agent.py` | implemented | run_task() done; needs vLLM for live test |
-| `baselines/langfuse_adapter/` | stub | comparison baseline a |
-| `baselines/opentelemetry_adapter/` | stub | comparison baseline a |
-| `baselines/rule_based_profiler/` | stub | ablation baseline b |
+| `agentprof/planner/backends/llm/prompts_v2.py` | **implemented** | v2 system prompt + context builder |
+| `agentprof/planner/backends/llm/llm_planner.py` | implemented | v0.4 legacy |
+| `agentprof/planner/backends/rule/rule_planner.py` | implemented | v0.4 ablation |
+| `agentprof/analysis/` | implemented | timeline, breakdown, resource_health, questions |
+| `agentprof/tools/system_metrics.py` | **implemented** | L1 — 4 hardware tools (psutil + nvidia-smi) |
+| `agentprof/tools/llm_serving_metrics.py` | **implemented** | L2 — 2 vLLM Prometheus tools |
+| `agentprof/tools/tool_execution_metrics.py` | **implemented** | L3 — 3 span/event tools |
+| `agentprof/tools/agent_semantic_metrics.py` | **implemented** | L4 — 2 agent trace tools |
+| `agentprof/controller_v2.py` | **implemented** | ReAct tool-calling loop (v2 main entry) |
+| `agentprof/controller.py` | implemented | v0.4 legacy linear pipeline |
+| `agentprof/executor.py` | implemented | v0.4 legacy |
+| `agentprof/report/` | implemented | markdown_report, summary_json |
+| `agentprof/adapters/bfcl.py` | implemented | BFCL → workload YAML |
+| `targets/langchain_react_agent/` | implemented | toy tools (slow/cpu/flaky) |
 
 ## Tests
 
-73 tests passing (nusa100, langchain + vLLM available):
+90 tests passing (nusa100, no GPU needed for unit tests):
 
 - `tests/test_schema.py` — schema construction + JSON roundtrip
 - `tests/test_storage.py` — event read/write
 - `tests/test_validator.py` — forbidden actions, budget
 - `tests/test_analysis.py` — timeline, breakdown, multi-program aggregation, registry from_yaml
 - `tests/test_milestone2.py` — resource_health, questions (18 tests)
-- `tests/test_tools.py` — slow/cpu/flaky tool behavior + workload event tagging (8 tests)
-- `tests/test_bfcl_adapter.py` — BFCL workload adapter conversion (4 tests)
+- `tests/test_tools.py` — slow/cpu/flaky tool behavior (8 tests)
+- `tests/test_bfcl_adapter.py` — BFCL workload adapter (4 tests)
+- `tests/test_report.py` — multi-program report structure (2 tests)
+- `tests/test_controller.py` — controller dry-run (1 test)
+- `tests/test_system_metrics.py` — L1 hardware tools (4 tests)
+- `tests/test_controller_v2.py` — v2 ReAct prompts + tool registry (6 tests)
+- `tests/test_layers_2_4.py` — L2-L4 tools (8 tests)
 
-End-to-end smoke test PASSED (rule planner, 3 workload programs, Qwen3-30B-A3B-Instruct-2507)
+Tier 0 ReAct profiling session PASSED (DeepSeek v4-pro, 5 tool calls, coherent drill-down report).
 
 Run with:
-
 ```bash
-conda activate agentprof
-pytest tests/ -x -q
+conda run -n agentprof pytest tests/ -x -q
 ```
 
 ## Completed
 
-- [x] Milestone 0: Repository skeleton
-- [x] v0.4 architecture refactor
-- [x] Milestone 1: observers, analysis (timeline, breakdown), ObserverRegistry.from_yaml() — 38 tests
-- [x] Milestone 2: resource_health, questions, run_workload_tool, agent run_task(), end-to-end smoke test
-- [x] Milestone 3: rule_planner, llm_planner, context_builder, executor, controller, report — full loop dry-run validated
-- [x] Smoke test PASSED on nusa100 (rule planner + Qwen3-30B-A3B-Instruct-2507, 2026-05-23)
-- [x] LLM planner smoke test PASSED on nusa100 (Qwen3-30B-A3B-Instruct-2507 → valid ObservationPlan JSON, 2026-05-23)
-- [x] Milestone 4: controlled multi-program config verified; per-program/system breakdown aggregation implemented; report and summary expose per-program results
-- [x] Milestone 5 partial: BFCL adapter implemented for offline workload YAML generation
+- [x] Milestone 0–4: repository skeleton, observers, analysis, LLM planner, controller, report
+- [x] v0.4 architecture (linear pipeline: baseline → analysis → planner → validator → executor)
+- [x] Milestone 5 partial: BFCL adapter implemented
+- [x] **v2 architecture**: ReAct tool-calling loop with 4-tier profiling tools (11 tools across L1-L4)
 
 ## In Progress
 
-- Milestone 5: BFCL demo subset selection and controlled demo run preparation
+- v2: controlled target agent profiling test (slow/cpu/flaky toy tools → verify LLM identifies artificial bottlenecks)
+- v2: end-to-end test with real benchmark (SWE-bench / TheAgentCompany)
 
-## Next: Milestone 5
+## Next
 
-1. Select concrete BFCL V3 multi-turn run IDs for demo
-2. Generate `configs/workload_bfcl_generated.yaml` from upstream BFCL questions
-3. Run target agent with vLLM under resource limits and compare report vs controlled workload
-
-## Blocked
-
-_(none recorded)_
-
-## Known Unknowns
-
-- BFCL V3 subset size and task selection criteria
-- BFCL trace adapter shape and expected output schema
-- Deep Agents SDK evaluation deferred
+1. Run controlled target agent + AgentProf v2 profiling (verify bottleneck identification)
+2. Set up Docker sandbox for real benchmark experiments

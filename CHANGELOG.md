@@ -6,6 +6,18 @@ Types: `feat` / `fix` / `docs` / `exp` / `refactor` / `chore`
 
 ---
 
+## 2026-06-04 | feat | v2 ReAct tool-calling loop with four-tier profiling tools
+
+- Added `agentprof/controller_v2.py`: LLM-driven ReAct profiling loop (replaces linear v0.4 pipeline)
+- Added `agentprof/planner/backends/llm/prompts_v2.py`: system prompt with 4-tier hierarchy + coarse→fine methodology
+- Added `agentprof/tools/system_metrics.py`: L1 — 4 hardware tools (CPU/mem/disk/net, processes, GPU, time-series sampling)
+- Added `agentprof/tools/llm_serving_metrics.py`: L2 — 2 vLLM Prometheus tools (snapshot + time-series)
+- Added `agentprof/tools/tool_execution_metrics.py`: L3 — 3 span/event inspection tools (tool calls, span detail, event query)
+- Added `agentprof/tools/agent_semantic_metrics.py`: L4 — 2 agent trace tools (list agents, trace loop)
+- Updated `docs/design/agentprof_design.md` with v2 architecture (deployment topology, ReAct diagram, 4 tiers)
+- Tier 0 test PASSED: DeepSeek v4-pro, 5 tool calls, coherent coarse→fine drill-down report
+- 90/90 tests passing
+
 ## 2026-05-31 | fix | BFCL adapter handles .json files that are newline-delimited JSON
 
 - `agentprof/adapters/bfcl.py`: `load_bfcl_cases()` now tries `json.loads()` first, falls back to line-by-line JSONL parsing on `JSONDecodeError`

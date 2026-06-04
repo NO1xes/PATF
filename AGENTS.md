@@ -1,4 +1,4 @@
-# AgentProf Coding Rules — v0.4
+# AgentProf Coding Rules — v2
 
 ## Project Goal
 
@@ -6,22 +6,24 @@ Build a methodology-driven profiling controller for agent systems under workload
 
 **Current stage: profiling only. No optimization.**
 
-## Architecture (v0.4)
+## Architecture (v2 — ReAct Tool-Calling Loop)
 
 ```text
-Target Agent    = LangChain/LangGraph ReAct single agent
-LLM Backend     = vLLM OpenAI-compatible server (Qwen3-30B-A3B)
-AgentProf       = LLM planner + deterministic tools + validator
+Target Agent System = Docker/native processes (ALREADY RUNNING — AgentProf does not control)
+LLM Backend         = vLLM or remote API (OpenAI-compatible)
+AgentProf           = LLM ReAct agent + four-tier profiling tools
 ```
 
-These three components must remain separate. Do NOT merge AgentProf logic into the Target Agent.
+AgentProf observes the target system from the same host, outside Docker.
+LLM calls profiling tools (L1→L4) in a coarse→fine drill-down pattern.
 
 ## Core Design Principle
 
 ```text
-LLM planner   → decides WHAT to observe (ObservationPlan)
-Python tools  → decides HOW to collect, compute, validate, write
-Validator     → enforces constraints (no optimization, no budget overrun)
+LLM (ReAct)   → decides WHAT to observe, at WHAT granularity, for HOW LONG
+Python tools  → execute the observation (psutil, nvidia-smi, Prometheus, events)
+System prompt → conveys 4-tier hierarchy, methodology, resource efficiency rules
+Validator     → enforces constraints (forbidden actions, budget)
 ```
 
 ## Forbidden — NEVER implement or call
@@ -87,10 +89,15 @@ update when that directory's interface, role, or implementation status changes.
 | `agentprof/planner/backends/rule/` | Rule-based planner (ablation) | Contributor-owned |
 | `agentprof/planner/__init__.py` | Factory: `get_planner()` | Interface-stable |
 | `agentprof/analysis/` | Deterministic computation: timeline, breakdown, resource_health, questions | Shared |
-| `agentprof/tools/` | Deterministic tools callable by controller | Shared |
-| `agentprof/executor.py` | Execute approved ObservationPlan | Shared |
+| `agentprof/tools/system_metrics.py` | L1 — psutil + nvidia-smi hardware tools | Shared |
+| `agentprof/tools/llm_serving_metrics.py` | L2 — vLLM Prometheus query tools | Shared |
+| `agentprof/tools/tool_execution_metrics.py` | L3 — span/event inspection tools | Shared |
+| `agentprof/tools/agent_semantic_metrics.py` | L4 — agent loop trace tools | Shared |
+| `agentprof/tools/run_workload_tool.py` | Legacy baseline runner | Shared |
+| `agentprof/executor.py` | Legacy executor (v0.4) | Shared |
 | `agentprof/report/` | Write report.md and summary.json | Shared |
-| `agentprof/controller.py` | Orchestrate the full profiling loop | Shared |
+| `agentprof/controller.py` | Legacy linear pipeline (v0.4) | Shared |
+| `agentprof/controller_v2.py` | ReAct tool-calling loop (v2) | Shared |
 | `baselines/` | Comparison baselines (Langfuse, OTel, rule-based) | Contributor-owned |
 | `experiments/designs/` | Architecture Decision Records | Both contributors |
 | `experiments/comparisons/` | Comparison experiment configs and results | Both contributors |
@@ -160,15 +167,15 @@ docker run --rm \
 ## Checklist Before Any PR to main
 
 1. Is Target Agent / LLM Backend / AgentProf still separate?
-2. Does `profiling_spec.yaml` have `forbidden_actions`?
-3. Is there an `ObserverRegistry`?
-4. Does next-step selection produce `ObservationPlan` (not a layer name)?
-5. Does `validator.py` check forbidden actions?
-6. Does LLM planner generate the plan (not just write the report)?
-7. Does `ExecutionModel` contain only nodes/edges/data_refs (no raw metrics)?
-8. Does `resource_snapshot` run at baseline (not deferred)?
-9. Does `report.md` include evidence and known_unknowns?
-10. Are zero forbidden optimization actions implemented?
+2. Does AgentProf NOT control/start/stop the target workload?
+3. Are forbidden actions enforced (validator + system prompt)?
+4. Does the system prompt convey the 4-tier tool hierarchy?
+5. Are all tool parameters exposed to the LLM (granularity, scope, duration)?
+6. Do L3/L4 tools gracefully degrade when events.jsonl is unavailable?
+7. Are profiling overhead metrics recorded?
+8. Does `report.md` include drill-down path evidence chain?
+9. Are zero forbidden optimization actions implemented?
+10. Does `docs/design/agentprof_design.md` reflect the current architecture?
 
 ## New Machine / New CC Agent Onboarding
 

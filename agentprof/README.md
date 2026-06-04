@@ -23,11 +23,16 @@ agentprof/
       llm/        LLM-based planner (Milestone 3, implemented)
       rule/       Rule-based planner — ablation baseline b (Milestone 2, implemented)
   analysis/       Deterministic computation: timeline, breakdown, resource_health, questions
-  tools/          Deterministic tools callable by controller
-  adapters/       External benchmark/observability adapters (BFCL workload adapter implemented)
-  executor.py     Execute approved ObservationPlan (Milestone 3, implemented)
-  report/         Write report.md and summary.json (Milestone 4, implemented)
-  controller.py   Orchestrate the full profiling loop (Milestone 3, implemented)
+  tools/          Profiling tools callable by LLM (v2) or controller (legacy)
+                  system_metrics.py       L1 — psutil + nvidia-smi hardware tools
+                  llm_serving_metrics.py   L2 — vLLM Prometheus query tools
+                  tool_execution_metrics.py L3 — span/event inspection tools
+                  agent_semantic_metrics.py L4 — agent loop trace tools
+  adapters/       External benchmark adapters (BFCL implemented)
+  executor.py     Legacy executor (v0.4)
+  report/         Write report.md and summary.json (Milestone 4)
+  controller.py   Legacy linear pipeline (v0.4)
+  controller_v2.py ReAct tool-calling loop (v2)
 ```
 
 ## Ownership tiers
@@ -53,6 +58,7 @@ See `PROJECT_STATUS.md` for the full table. Summary (as of 2026-05-23):
 - Milestone 0–4: all planned modules **implemented** — schema, model, validator, storage, state,
   observers (langchain), analysis (timeline, breakdown, resource_health, questions),
   rule_planner, llm_planner, executor, controller, report
-- 73 tests passing; end-to-end smoke test PASSED (rule + LLM planner, nusa100)
+- 90 tests passing; Tier 0 ReAct profiling session PASSED (DeepSeek v4-pro, 5 tool calls)
 - Milestone 4: multi-program aggregation and report quality implemented
-- Milestone 5: BFCL workload adapter implemented; demo subset/run still pending
+- Milestone 5: BFCL workload adapter implemented
+- **v2: ReAct tool-calling loop with 11 tools across 4 tiers (L1 Hardware → L4 Agent Semantic)**
