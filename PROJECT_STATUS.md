@@ -47,7 +47,7 @@ Stable: `main` (commit d6223f9 — Milestones 0–3 merged 2026-05-23)
 
 ## Tests
 
-70 tests passing (nusa100, langchain + vLLM available):
+73 tests passing (nusa100, langchain + vLLM available):
 
 - `tests/test_schema.py` — schema construction + JSON roundtrip
 - `tests/test_storage.py` — event read/write
