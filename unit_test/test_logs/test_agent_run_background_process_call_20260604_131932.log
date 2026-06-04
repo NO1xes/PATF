@@ -1,0 +1,23 @@
+Query: Run the command 'sleep 5' as a background process and tell me the process ID.
+Timestamp: 20260604_131932
+Total messages: 4
+
+--- Messages ---
+[0] Role: human
+Content: Run the command 'sleep 5' as a background process and tell me the process ID.
+[1] Role: ai
+Content: 
+[2] Role: tool
+Content: [OK] Process started: process_29d9427d (PID: 29d9427d, real PID: 18308)
+Output: /tmp/agentprof_processes/29d9427d.stdout
+Stderr: /tmp/agentprof_processes/29d9427d.stderr
+Status: running
+[3] Role: ai
+Content: The `sleep 5` command has been started as a background process. Here are the details:
+
+- **Process ID (internal):** `29d9427d`
+- **Real PID:** `18308`
+- **Output file:** `/tmp/agentprof_processes/29d9427d.stdout`
+- **Status:** Running
+
+The process will run for 5 seconds and then exit automatically.

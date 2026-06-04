@@ -1,0 +1,45 @@
+Query: Get the CPU information for this system.
+Timestamp: 20260604_131854
+Total messages: 4
+
+--- Messages ---
+[0] Role: human
+Content: Get the CPU information for this system.
+[1] Role: ai
+Content: 
+[2] Role: tool
+Content: === CPU ===
+Logical CPUs: 8
+Frequency: 600 MHz
+Overall usage: 10.3%
+Per-core: 0.0%, 10.0%, 22.2%, 30.0%, 0.0%, 0.0%, 0.0%, 20.0%
+Times: user=3919.2s, system=1022.2s, idle=80001.4s
+[3] Role: ai
+Content: Here's the CPU information for this system:
+
+| Metric | Value |
+|---|---|
+| **Logical CPUs (cores)** | 8 |
+| **Frequency** | 600 MHz |
+| **Overall Usage** | 10.3% |
+
+### Per-Core Usage
+| Core | Usage |
+|---|---|
+| Core 0 | 0.0% |
+| Core 1 | 10.0% |
+| Core 2 | 22.2% |
+| Core 3 | 30.0% |
+| Core 4 | 0.0% |
+| Core 5 | 0.0% |
+| Core 6 | 0.0% |
+| Core 7 | 20.0% |
+
+### CPU Time (cumulative)
+| Type | Time |
+|---|---|
+| User | 3,919.2s |
+| System | 1,022.2s |
+| Idle | 80,001.4s |
+
+The system has **8 logi

@@ -1,0 +1,35 @@
+Query: Check the status of the monitor with ID 'test_status_check'.
+Timestamp: 20260604_131927
+Total messages: 4
+
+--- Messages ---
+[0] Role: human
+Content: Check the status of the monitor with ID 'test_status_check'.
+[1] Role: ai
+Content: 
+[2] Role: tool
+Content: [OK] Monitor: test_status_check
+Status: running
+Progress: 32.7% (3.3s / 10.0s)
+Metrics: cpu, memory
+Interval: 1.0s
+Records collected: 12
+  cpu_percent: 4 records
+  memory_used_gb: 4 records
+  memory_percent: 4 records
+
+[3] Role: ai
+Content: The monitor **`test_status_check`** is currently **running**. Here's a summary:
+
+| Detail | Value |
+|---|---|
+| **Status** | 🟢 Running |
+| **Progress** | 32.7% (3.3s / 10.0s) |
+| **Metrics** | CPU, Memory |
+| **Interval** | 1.0s |
+| **Records Collected** | 12 total |
+| | • `cpu_percent`: 4 records |
+| | • `memory_used_gb`: 4 records |
+| | • `memory_percent`: 4 records |
+
+The session has about **6.7 seconds remaining** before it completes. You can retrieve the collected data at any time using the

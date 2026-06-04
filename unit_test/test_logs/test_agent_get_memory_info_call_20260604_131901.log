@@ -1,0 +1,30 @@
+Query: Get the memory usage information for this system.
+Timestamp: 20260604_131901
+Total messages: 4
+
+--- Messages ---
+[0] Role: human
+Content: Get the memory usage information for this system.
+[1] Role: ai
+Content: 
+[2] Role: tool
+Content: 
+=== Memory ===
+RAM: 15.3 GB total
+Used: 4.9 GB (31.9%)
+Available: 10.4 GB
+Free: 8.3 GB
+Swap: 4.0 GB total, 0.0% used
+[3] Role: ai
+Content: Here's the memory usage information for your system:
+
+| Metric       | Value           |
+|--------------|-----------------|
+| **Total RAM**    | 15.3 GB         |
+| **Used RAM**     | 4.9 GB (31.9%)  |
+| **Available**    | 10.4 GB         |
+| **Free**         | 8.3 GB          |
+| **Swap Total**   | 4.0 GB          |
+| **Swap Used**    | 0.0%            |
+
+The system has plenty of available memory, with only about a third of RAM currently in use and no swap usage at all. Everything looks healthy
