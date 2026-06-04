@@ -1,0 +1,40 @@
+Query: Start a system monitor with ID 'test_monitor_123' for 2 seconds at 0.5s interval, then tell me the status.
+Timestamp: 20260604_131918
+Total messages: 6
+
+--- Messages ---
+[0] Role: human
+Content: Start a system monitor with ID 'test_monitor_123' for 2 seconds at 0.5s interval, then tell me the status.
+[1] Role: ai
+Content: 
+[2] Role: tool
+Content: [OK] Monitoring started: test_monitor_123
+Duration: 2.0s | Interval: 0.5s | Metrics: cpu, memory
+Estimated data points: ~4
+Use action='status' to check progress, action='get' to retrieve results
+[3] Role: ai
+Content: Monitor started. Now let me check its status:
+[4] Role: tool
+Content: [OK] Monitor: test_monitor_123
+Status: completed
+Progress: 100.0% (2.0s / 2.0s)
+Metrics: cpu, memory
+Interval: 0.5s
+Records collected: 12
+  cpu_percent: 4 records
+  memory_used_gb: 4 records
+  memory_percent: 4 records
+
+[5] Role: ai
+Content: Here's a summary:
+
+| Field | Value |
+|---|---|
+| **Monitor ID** | `test_monitor_123` |
+| **Status** | ✅ **Completed** |
+| **Progress** | 100% (2.0s / 2.0s) |
+| **Metrics** | CPU, Memory |
+| **Interval** | 0.5s |
+| **Records Collected** | 12 total: 4 CPU, 4 memory used (GB), 4 memory percent |
+
+The monitoring session ran for the full 2 seconds and collected 4 data points across CPU and memory metrics as expected. If you'd like to retrieve the actual recorded data, just let me know and I can fetch

@@ -1,0 +1,18 @@
+Query: Read the file at '/tmp/tmp85qtm418.txt' and tell me its contents.
+Timestamp: 20260604_131819
+Total messages: 4
+
+--- Messages ---
+[0] Role: human
+Content: Read the file at '/tmp/tmp85qtm418.txt' and tell me its contents.
+[1] Role: ai
+Content: 
+[2] Role: tool
+Content: === /tmp/tmp85qtm418.txt (lines 0-0) ===
+Hello from test file
+[3] Role: ai
+Content: The file `/tmp/tmp85qtm418.txt` contains a single line:
+
+```
+Hello from test file
+```

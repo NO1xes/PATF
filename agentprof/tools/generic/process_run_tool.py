@@ -3,8 +3,6 @@
 Used by LLM agent to start long-running tasks without blocking.
 """
 
-from __future__ import annotations
-
 import os
 import subprocess
 import uuid

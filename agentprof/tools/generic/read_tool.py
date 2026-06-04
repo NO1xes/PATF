@@ -3,8 +3,6 @@
 Used by LLM agent to inspect files, logs, configurations, and code.
 """
 
-from __future__ import annotations
-
 import os
 from pathlib import Path
 from typing import Annotated

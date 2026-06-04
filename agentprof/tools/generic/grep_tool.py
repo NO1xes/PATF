@@ -3,8 +3,6 @@
 Used by LLM agent to search code, logs, and documents for specific content.
 """
 
-from __future__ import annotations
-
 import os
 import re
 from pathlib import Path

@@ -3,8 +3,6 @@
 Used by LLM agent to get CPU, memory, disk, and network information.
 """
 
-from __future__ import annotations
-
 import os
 from typing import Annotated
 

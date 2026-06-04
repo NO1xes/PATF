@@ -3,8 +3,6 @@
 Used by LLM agent to inspect large files, binary data, or export specific chunks.
 """
 
-from __future__ import annotations
-
 import os
 import base64
 from pathlib import Path

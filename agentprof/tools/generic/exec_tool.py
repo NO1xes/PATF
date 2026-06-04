@@ -3,8 +3,6 @@
 Used by LLM agent to run system commands for profiling, analysis, and diagnostics.
 """
 
-from __future__ import annotations
-
 import subprocess
 from typing import Annotated
 

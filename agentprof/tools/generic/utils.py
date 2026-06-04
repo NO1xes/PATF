@@ -3,8 +3,6 @@
 Provides safety checks and environment setup for shell operations.
 """
 
-from __future__ import annotations
-
 import os
 import re
 from typing import Any

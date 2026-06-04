@@ -3,8 +3,6 @@
 Used by LLM agent to explore file system structure and find files.
 """
 
-from __future__ import annotations
-
 import os
 from datetime import datetime
 from pathlib import Path

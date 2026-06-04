@@ -3,8 +3,6 @@
 Used by LLM agent to save analysis results, reports, and generated content.
 """
 
-from __future__ import annotations
-
 import os
 from pathlib import Path
 from typing import Annotated
