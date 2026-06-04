@@ -46,21 +46,25 @@ def test_build_profiling_context_returns_non_empty_string():
     assert "get_system_overview" in ctx
 
 
-def test_get_active_tools_returns_l1_tools():
+def test_get_active_tools_includes_all_layers():
     tools = get_active_tools()
-    assert len(tools) == 4
+    # L1: 4 + L2: 2 + L3: 3 + L4: 2 = 11
+    assert len(tools) == 11
     names = [t["function"]["name"] for t in tools]
-    assert "get_system_overview" in names
-    assert "get_process_tree" in names
-    assert "get_gpu_metrics" in names
-    assert "sample_resources" in names
+    for expected in [
+        "get_system_overview", "get_process_tree", "get_gpu_metrics", "sample_resources",
+        "get_vllm_metrics", "sample_vllm_metrics",
+        "observe_tool_calls", "inspect_span", "query_events",
+        "list_active_agents", "trace_agent_loop",
+    ]:
+        assert expected in names, f"Missing tool: {expected}"
 
 
 def test_get_tool_dispatch_maps_all_tools():
     dispatch = get_tool_dispatch()
-    for name in ["get_system_overview", "get_process_tree", "get_gpu_metrics", "sample_resources"]:
-        assert name in dispatch
-        assert callable(dispatch[name])
+    assert len(dispatch) == 11
+    for name in dispatch:
+        assert callable(dispatch[name]), f"Not callable: {name}"
 
 
 def test_build_machine_info_has_expected_keys():

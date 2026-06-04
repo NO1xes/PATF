@@ -15,6 +15,9 @@ cannot start/stop/modify the workload.
 from __future__ import annotations
 
 from agentprof.tools.system_metrics import TOOL_DEFINITIONS as L1_TOOLS
+from agentprof.tools.llm_serving_metrics import TOOL_DEFINITIONS as L2_TOOLS
+from agentprof.tools.tool_execution_metrics import TOOL_DEFINITIONS as L3_TOOLS
+from agentprof.tools.agent_semantic_metrics import TOOL_DEFINITIONS as L4_TOOLS
 
 
 # ---------------------------------------------------------------------------
@@ -49,13 +52,39 @@ Cheapest tools.  Use these FIRST to get a health snapshot.
   you have already confirmed a burst/anomaly exists.
 
 ### Layer 2 — LLM Serving
-(available in a future release; you will be told if these are active)
+Tools for diagnosing the model serving layer.
+- `get_vllm_metrics(metrics_url, metrics)` — query Prometheus endpoint
+  for queue depth, token throughput, KV-cache, latency.  Use this when
+  Layer 1 shows high GPU usage or you suspect the LLM server is the
+  bottleneck.  If the endpoint is unreachable, the agent is using an
+  external API — note this as a latency gap in your report.
+- `sample_vllm_metrics(duration_sec, interval_sec, metrics_url)` —
+  time-series of the above.  Start with interval_sec >= 5.
 
 ### Layer 3 — Tool Execution
-(available in a future release; you will be told if these are active)
+Tools for inspecting individual tool calls and spans.
+- `observe_tool_calls(tool_filter, events_path)` — per-call latency,
+  error rate, aggregate stats.  Use this when Layer 1 shows a specific
+  process consuming CPU or when retry patterns are suspected.
+- `inspect_span(span_id)` — zoom into a single span's events, duration,
+  and error details.  Use this when you find a slow or failing call.
+- `query_events(layer, time_start, time_end, event_type)` — cross-layer
+  event search.  Use this to correlate events across layers.
+
+NOTE: Layer 3 tools read from events.jsonl (collected by white-box
+observers).  If events data is not available, these tools return
+`available: false` — recommend enabling white-box observers.
 
 ### Layer 4 — Agent Semantic
-(available in a future release; you will be told if these are active)
+Tools for tracing agent-level behaviour.
+- `list_active_agents()` — find running agent processes via psutil
+  (black-box safe).  Tells you how many agents and which frameworks.
+- `trace_agent_loop(program_id, events_path)` — reconstruct the
+  ReAct loop: LLM calls, tool calls, retry counts, step timings.
+  This is the FINEST drill-down.  Requires white-box events data.
+
+NOTE: Layer 4 tools are the most expensive and should be used as the
+LAST step, after Layers 1-3 have narrowed down the scope.
 
 ## Methodology
 
@@ -170,21 +199,27 @@ def build_profiling_context(
 # ---------------------------------------------------------------------------
 
 def get_active_tools() -> list[dict]:
-    """Return the tool definitions active in the current phase.
-
-    Phase 1: Layer 1 tools only.
-    Future phases will append L2/L3/L4 tool definitions here.
-    """
-    return list(L1_TOOLS)
+    """Return the tool definitions for all active layers."""
+    tools: list[dict] = []
+    tools.extend(L1_TOOLS)
+    tools.extend(L2_TOOLS)
+    tools.extend(L3_TOOLS)
+    tools.extend(L4_TOOLS)
+    return tools
 
 
 def get_tool_dispatch() -> dict:
     """Return {tool_name: callable} for all active tools."""
     from agentprof.tools.system_metrics import TOOL_DISPATCH as L1_DISPATCH
+    from agentprof.tools.llm_serving_metrics import TOOL_DISPATCH as L2_DISPATCH
+    from agentprof.tools.tool_execution_metrics import TOOL_DISPATCH as L3_DISPATCH
+    from agentprof.tools.agent_semantic_metrics import TOOL_DISPATCH as L4_DISPATCH
 
-    dispatch = {}
+    dispatch: dict = {}
     dispatch.update(L1_DISPATCH)
-    # Future phases: dispatch.update(L2_DISPATCH), etc.
+    dispatch.update(L2_DISPATCH)
+    dispatch.update(L3_DISPATCH)
+    dispatch.update(L4_DISPATCH)
     return dispatch
 
 
