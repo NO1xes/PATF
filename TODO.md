@@ -1,5 +1,5 @@
 # TODO
-claude --resume c9e072ab-2562-4e83-800a-dd45b76adda2
+
 ## Milestone 0: Repository Skeleton ✅
 
 - [x] Create directory structure
