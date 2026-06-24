@@ -11,7 +11,6 @@ from coarse to fine.
 from __future__ import annotations
 
 import json
-import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -123,7 +122,7 @@ def run_profiling_session(
     machine_info = _build_machine_info()
 
     # -- setup output directory ----------------------------------------------
-    run_id = f"run_{uuid.uuid4().hex[:8]}"
+    run_id = datetime.now(timezone.utc).strftime("run_%Y%m%d_%H%M%S")
     output_dir = ensure_run_dir(Path(profiles_base), run_id)
 
     # -- build context -------------------------------------------------------
